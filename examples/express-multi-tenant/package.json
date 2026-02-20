@@ -1,0 +1,15 @@
+{
+  "name": "express-multi-tenant-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --import tsx app.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "tsx": "^4.0.0"
+  }
+}
