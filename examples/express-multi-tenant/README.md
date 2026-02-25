@@ -1,6 +1,6 @@
 # Express Multi-Tenant Example
 
-A minimal Express app demonstrating `@vegtelenseg/access-control` in a realistic multi-tenant setup.
+A minimal Express app demonstrating `@vegtelenseg/sentinel` in a realistic multi-tenant setup.
 
 ## What It Shows
 

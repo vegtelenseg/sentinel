@@ -1,5 +1,5 @@
 {
-  "name": "@vegtelenseg/access-control",
+  "name": "@vegtelenseg/sentinel",
   "version": "0.3.0",
   "description": "TypeScript-first, domain-driven authorization engine for modern SaaS apps",
   "type": "module",

@@ -1,5 +1,5 @@
 /**
- * Benchmark suite for @vegtelenseg/access-control
+' * Benchmark suite for @vegtelenseg/sentinel
  *
  * Measures evaluation latency across different rule-set sizes (100, 1k, 10k)
  * and scenarios (unconditional, conditional, cache hit, permitted(), explain()).
@@ -217,7 +217,7 @@ function runSuite(ruleCount: number): BenchResult[] {
 // Main
 // ---------------------------------------------------------------------------
 
-console.log("@vegtelenseg/access-control — benchmark suite\n");
+console.log("@vegtelenseg/sentinel — benchmark suite\n");
 console.log(`Node ${process.version} | ${process.platform} ${process.arch}\n`);
 
 const allResults: BenchResult[] = [];
