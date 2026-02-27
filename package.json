@@ -53,6 +53,15 @@
   ],
   "author": "siya",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vegtelenseg/sentinel.git"
+  },
+  "homepage": "https://github.com/vegtelenseg/sentinel#readme",
+  "bugs": {
+    "url": "https://github.com/vegtelenseg/sentinel/issues"
+  },
+  "sideEffects": false,
   "devDependencies": {
     "@types/node": "^22.0.0",
     "@vitest/coverage-v8": "^3.0.0",

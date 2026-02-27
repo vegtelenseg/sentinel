@@ -16,14 +16,14 @@ interface AppSchema extends SchemaDefinition {
   roles: "owner" | "admin" | "member" | "viewer";
   resources: "invoice" | "project" | "user";
   actions:
-    | "invoice:create"
-    | "invoice:read"
-    | "invoice:approve"
-    | "invoice:send"
-    | "project:read"
-    | "project:archive"
-    | "user:read"
-    | "user:invite";
+  | "invoice:create"
+  | "invoice:read"
+  | "invoice:approve"
+  | "invoice:send"
+  | "project:read"
+  | "project:archive"
+  | "user:read"
+  | "user:invite";
 }
 
 // ---------------------------------------------------------------------------
@@ -171,7 +171,7 @@ app.post(
   "/invoices/:id/approve",
   guard(engine, "invoice:approve", "invoice", {
     getSubject,
-    getResourceContext: (req) => ({ id: req.params.id }),
+    getResourceContext: (req) => ({ id: (req.params as Record<string, string>).id }),
     getTenantId,
   }),
   (req, res) => {
