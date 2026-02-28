@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-02-28
+
+### Added
+
+- CommonJS build output alongside ESM for wider compatibility
+- ESLint flat config with typescript-eslint
+- Automated npm publish workflow with provenance
+- `.npmrc` with `access=public` for scoped package
+
+### Fixed
+
+- `"require"` and `"default"` conditions added to all package.json exports
+- CI now runs lint checks
+- Coverage results uploaded as CI artifacts
+
+### Changed
+
+- Build tool switched from tsc to tsup for dual ESM/CJS output
+
 ## [0.3.0] - 2026-02-27
 
 ### Added
