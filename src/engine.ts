@@ -15,7 +15,8 @@ import type {
   RuleEvaluation,
   ConditionResult,
 } from "./types.js";
-import { RuleBuilder, allow as _allow, deny as _deny } from "./policy-builder.js";
+import type { RuleBuilder } from "./policy-builder.js";
+import { allow as _allow, deny as _deny } from "./policy-builder.js";
 import type { RoleHierarchy } from "./role-hierarchy.js";
 
 // ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { AccessEngine } from "./engine.js";
 import { allow, deny } from "./policy-builder.js";
 import { createAuthServer } from "./server.js";
-import type { SchemaDefinition, Subject } from "./types.js";
+import type { SchemaDefinition } from "./types.js";
 
 interface TestSchema extends SchemaDefinition {
   roles: "admin" | "member" | "viewer";

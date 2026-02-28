@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { AccessEngine } from "./engine.js";
 import { allow, deny, createPolicyFactory } from "./policy-builder.js";
 import { importRules } from "./serialization.js";
 import { createAuthServer } from "./server.js";
 import { toAuditEntry } from "./types.js";
-import type { SchemaDefinition, Subject, Decision, AuditEntry } from "./types.js";
+import type { SchemaDefinition, Subject } from "./types.js";
 
 // ---------------------------------------------------------------------------
 // Shared test schema
@@ -94,6 +94,7 @@ describe("Security: rules are frozen on add", () => {
 
     const stored = engine.getRules()[0]!;
     expect(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (stored as any).effect = "deny";
     }).toThrow();
   });
@@ -196,6 +197,7 @@ describe("Security: serialization import validation", () => {
       rules: [
         {
           id: "bad",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           effect: "permit" as any,
           roles: "*" as const,
           actions: "*" as const,

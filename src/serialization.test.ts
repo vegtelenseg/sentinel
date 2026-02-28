@@ -72,7 +72,7 @@ describe("JSON Serialization", () => {
       .when(isOwner)
       .build();
 
-    const conditionNames = new Map<Function, string>();
+    const conditionNames = new Map<(...args: unknown[]) => unknown, string>();
     conditionNames.set(isOwner, "isOwner");
 
     const doc = exportRules([rule], conditionNames as never);
