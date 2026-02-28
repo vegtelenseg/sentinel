@@ -14,6 +14,8 @@ This library was built from a different starting point:
 
 **Zero runtime dependencies. ~1,800 lines. 1:1 test-to-code ratio.**
 
+**[Try it live →](https://vegtelenseg.github.io/sentinel-example/)** — Interactive playground with policy editor, multi-tenant evaluation, explain traces, and audit log. ([source](https://github.com/vegtelenseg/sentinel-example))
+
 ---
 
 ## How It Compares
@@ -163,6 +165,8 @@ Or subscribe at runtime:
 const unsubscribe = engine.onDecision((d) => auditLog.write(toAuditEntry(d)));
 unsubscribe(); // when done
 ```
+
+> Want to see all of this running interactively? **[Open the playground →](https://vegtelenseg.github.io/sentinel-example/)**
 
 ---
 

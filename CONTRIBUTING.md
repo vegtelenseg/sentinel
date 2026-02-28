@@ -5,7 +5,7 @@ Thanks for considering a contribution to `@siremzam/sentinel`.
 ## Getting Started
 
 ```bash
-git clone https://github.com/siremzam/sentinel.git
+git clone https://github.com/vegtelenseg/sentinel.git
 cd sentinel
 npm install
 npm test
