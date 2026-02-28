@@ -1,4 +1,4 @@
-# @vegtelenseg/sentinel
+# @siremzam/sentinel
 
 **TypeScript-first, domain-driven authorization engine for modern SaaS apps.**
 
@@ -18,7 +18,7 @@ This library was built from a different starting point:
 
 ## How It Compares
 
-| Feature | **@vegtelenseg/sentinel** | Casbin | accesscontrol | CASL |
+| Feature | **@siremzam/sentinel** | Casbin | accesscontrol | CASL |
 |---|---|---|---|---|
 | TypeScript-first (full inference) | Yes | Partial | Partial | Yes |
 | Domain actions (`invoice:approve`) | Native | Via model config | No (CRUD only) | Via `subject` |
@@ -39,7 +39,7 @@ This library was built from a different starting point:
 ## Install
 
 ```bash
-npm install @vegtelenseg/sentinel
+npm install @siremzam/sentinel
 ```
 
 ---
@@ -49,8 +49,8 @@ npm install @vegtelenseg/sentinel
 ### 1. Define your schema
 
 ```typescript
-import { AccessEngine, createPolicyFactory, RoleHierarchy } from "@vegtelenseg/sentinel";
-import type { SchemaDefinition, Subject } from "@vegtelenseg/sentinel";
+import { AccessEngine, createPolicyFactory, RoleHierarchy } from "@siremzam/sentinel";
+import type { SchemaDefinition, Subject } from "@siremzam/sentinel";
 
 interface MySchema extends SchemaDefinition {
   roles: "owner" | "admin" | "manager" | "member" | "viewer";
@@ -146,7 +146,7 @@ const d2 = engine.evaluate(user, "invoice:approve", "invoice", {}, "tenant-b");
 ### 4. Observe decisions
 
 ```typescript
-import { toAuditEntry } from "@vegtelenseg/sentinel";
+import { toAuditEntry } from "@siremzam/sentinel";
 
 const engine = new AccessEngine<MySchema>({
   schema: {} as MySchema,
@@ -173,7 +173,7 @@ unsubscribe(); // when done
 Eliminates the `<MySchema>` generic parameter on every rule:
 
 ```typescript
-import { createPolicyFactory } from "@vegtelenseg/sentinel";
+import { createPolicyFactory } from "@siremzam/sentinel";
 
 const { allow, deny } = createPolicyFactory<MySchema>();
 
@@ -257,7 +257,7 @@ For async conditions, use `engine.explainAsync()`.
 Convert a `Decision` to a serialization-safe format for logging, queuing, or storage:
 
 ```typescript
-import { toAuditEntry } from "@vegtelenseg/sentinel";
+import { toAuditEntry } from "@siremzam/sentinel";
 
 const decision = engine.evaluate(user, "invoice:approve", "invoice");
 const entry = toAuditEntry(decision);
@@ -269,7 +269,7 @@ const entry = toAuditEntry(decision);
 Define that higher roles inherit all permissions of lower roles:
 
 ```typescript
-import { RoleHierarchy } from "@vegtelenseg/sentinel";
+import { RoleHierarchy } from "@siremzam/sentinel";
 
 const hierarchy = new RoleHierarchy<MySchema>()
   .define("owner", ["admin"])
@@ -318,7 +318,7 @@ import {
   exportRulesToJson,
   importRulesFromJson,
   ConditionRegistry,
-} from "@vegtelenseg/sentinel";
+} from "@siremzam/sentinel";
 
 // Export rules to JSON
 const json = exportRulesToJson(engine.getRules());
@@ -365,7 +365,8 @@ Only unconditional rule evaluations are cached — conditional results are alway
 Run the engine as a standalone HTTP authorization microservice:
 
 ```typescript
-import { createAuthServer, AccessEngine } from "@vegtelenseg/sentinel";
+import { AccessEngine } from "@siremzam/sentinel";
+import { createAuthServer } from "@siremzam/sentinel/server";
 
 const engine = new AccessEngine<MySchema>({ schema: {} as MySchema });
 engine.addRules(/* ... */);
@@ -397,7 +398,7 @@ Zero dependencies. Uses Node's built-in `http` module.
 **Express:**
 
 ```typescript
-import { guard } from "@vegtelenseg/sentinel/middleware/express";
+import { guard } from "@siremzam/sentinel/middleware/express";
 
 app.post(
   "/invoices/:id/approve",
@@ -413,7 +414,7 @@ app.post(
 **Fastify:**
 
 ```typescript
-import { fastifyGuard } from "@vegtelenseg/sentinel/middleware/fastify";
+import { fastifyGuard } from "@siremzam/sentinel/middleware/fastify";
 
 fastify.post("/invoices/:id/approve", {
   preHandler: fastifyGuard(engine, "invoice:approve", "invoice", {
@@ -430,7 +431,7 @@ fastify.post("/invoices/:id/approve", {
 import {
   createAuthorizeDecorator,
   createAuthGuard,
-} from "@vegtelenseg/sentinel/middleware/nestjs";
+} from "@siremzam/sentinel/middleware/nestjs";
 
 const Authorize = createAuthorizeDecorator<MySchema>();
 

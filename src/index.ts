@@ -9,7 +9,6 @@ export {
   importRules,
   importRulesFromJson,
 } from "./serialization.js";
-export { createAuthServer } from "./server.js";
 
 export { toAuditEntry } from "./types.js";
 

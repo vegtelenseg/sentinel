@@ -13,7 +13,7 @@ If you discover a security vulnerability, please report it responsibly.
 
 **Do not open a public GitHub issue.**
 
-Instead, email **security@vegtelenseg.dev** with:
+Instead, email **mzam.siya@gmail.com** with:
 
 - A description of the vulnerability
 - Steps to reproduce

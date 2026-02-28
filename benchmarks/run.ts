@@ -1,5 +1,5 @@
 /**
-' * Benchmark suite for @vegtelenseg/sentinel
+' * Benchmark suite for @siremzam/sentinel
  *
  * Measures evaluation latency across different rule-set sizes (100, 1k, 10k)
  * and scenarios (unconditional, conditional, cache hit, permitted(), explain()).
@@ -18,12 +18,12 @@ interface BenchSchema extends SchemaDefinition {
   roles: "owner" | "admin" | "manager" | "member" | "viewer" | "auditor";
   resources: "invoice" | "project" | "report" | "user" | "org" | "billing";
   actions:
-    | "invoice:create" | "invoice:read" | "invoice:approve" | "invoice:send" | "invoice:delete"
-    | "project:create" | "project:read" | "project:archive" | "project:delete"
-    | "report:read" | "report:export"
-    | "user:read" | "user:invite" | "user:impersonate"
-    | "org:read" | "org:update"
-    | "billing:read" | "billing:manage";
+  | "invoice:create" | "invoice:read" | "invoice:approve" | "invoice:send" | "invoice:delete"
+  | "project:create" | "project:read" | "project:archive" | "project:delete"
+  | "report:read" | "report:export"
+  | "user:read" | "user:invite" | "user:impersonate"
+  | "org:read" | "org:update"
+  | "billing:read" | "billing:manage";
 }
 
 const { allow, deny } = createPolicyFactory<BenchSchema>();
@@ -217,7 +217,7 @@ function runSuite(ruleCount: number): BenchResult[] {
 // Main
 // ---------------------------------------------------------------------------
 
-console.log("@vegtelenseg/sentinel — benchmark suite\n");
+console.log("@siremzam/sentinel — benchmark suite\n");
 console.log(`Node ${process.version} | ${process.platform} ${process.arch}\n`);
 
 const allResults: BenchResult[] = [];

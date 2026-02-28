@@ -1,6 +1,6 @@
 {
-  "name": "@vegtelenseg/sentinel",
-  "version": "0.3.0",
+  "name": "@siremzam/sentinel",
+  "version": "0.3.1",
   "description": "TypeScript-first, domain-driven authorization engine for modern SaaS apps",
   "type": "module",
   "main": "./dist/index.js",
