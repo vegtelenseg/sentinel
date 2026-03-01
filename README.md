@@ -28,11 +28,11 @@ This library was built from a different starting point:
 
 ---
 
-### What's New in 0.3.2
+### What's New in 0.3.3
 
+- Hono middleware — `honoGuard()` via `@siremzam/sentinel/middleware/hono`
 - README rewrite: evaluation walkthrough, concepts glossary, patterns & recipes, migration guide, benchmark data
 - Standalone example (`examples/standalone/`) — no HTTP server needed
-- "When NOT to Use This" and "Testing Your Policies" sections
 
 See the full [CHANGELOG](./CHANGELOG.md).
 
@@ -61,7 +61,7 @@ See the full [CHANGELOG](./CHANGELOG.md).
   - [toAuditEntry()](#toauditentry)
   - [permitted() — UI Rendering](#permitted--ui-rendering)
 - [Integration](#integration)
-  - [Middleware (Express, Fastify, NestJS)](#middleware)
+  - [Middleware (Express, Fastify, Hono, NestJS)](#middleware)
   - [Server Mode](#server-mode)
   - [JSON Policy Serialization](#json-policy-serialization)
 - [Performance](#performance)
@@ -93,7 +93,7 @@ See the full [CHANGELOG](./CHANGELOG.md).
 | UI permission set | `permitted()` returns `Set` | No | `permission.filter()` | `ability.can()` per action |
 | JSON policy storage | `exportRules` / `importRules` + `ConditionRegistry` | CSV / JSON adapters | No | Via `@casl/ability/extra` |
 | Server mode (HTTP microservice) | Built-in (`createAuthServer`) | No | No | No |
-| Middleware | Express, Fastify, NestJS | Express (community) | Express (community) | Express, NestJS |
+| Middleware | Express, Fastify, Hono, NestJS | Express (community) | Express (community) | Express, NestJS |
 | Dependencies | **0** | 2+ | 2 | 1+ |
 | DSL required | **No** (pure TypeScript) | Yes (Casbin model) | No | No |
 
@@ -571,6 +571,22 @@ fastify.post("/invoices/:id/approve", {
     getTenantId: (req) => req.headers["x-tenant-id"],
   }),
 }, handler);
+```
+
+**Hono:**
+
+```typescript
+import { honoGuard } from "@siremzam/sentinel/middleware/hono";
+
+app.post(
+  "/invoices/:id/approve",
+  honoGuard(engine, "invoice:approve", "invoice", {
+    getSubject: (c) => c.get("user"),
+    getResourceContext: (c) => ({ id: c.req.param("id") }),
+    getTenantId: (c) => c.req.header("x-tenant-id"),
+  }),
+  handler,
+);
 ```
 
 **NestJS:**

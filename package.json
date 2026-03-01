@@ -1,6 +1,6 @@
 {
   "name": "@siremzam/sentinel",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "TypeScript-first, domain-driven authorization engine for modern SaaS apps",
   "type": "module",
   "main": "./dist/index.js",
@@ -29,6 +29,12 @@
       "import": "./dist/middleware/nestjs.js",
       "require": "./dist/middleware/nestjs.cjs",
       "default": "./dist/middleware/nestjs.js"
+    },
+    "./middleware/hono": {
+      "types": "./dist/middleware/hono.d.ts",
+      "import": "./dist/middleware/hono.js",
+      "require": "./dist/middleware/hono.cjs",
+      "default": "./dist/middleware/hono.js"
     },
     "./server": {
       "types": "./dist/server.d.ts",
