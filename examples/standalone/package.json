@@ -1,0 +1,12 @@
+{
+  "name": "sentinel-standalone-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx main.ts"
+  },
+  "dependencies": {
+    "@siremzam/sentinel": "latest",
+    "tsx": "^4.21.0"
+  }
+}
