@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-03-01
+
+### Added
+
+- README rewrite: badges, table of contents, "What's New" callout, prominent playground link
+- "How Evaluation Works" section with step-by-step algorithm walkthrough
+- Concepts glossary for authorization newcomers (collapsible)
+- "Patterns & Recipes" section with 6 real-world scenarios (ownership, time-gated access, feature flags, async quota checks, broad deny overrides, IP-based restrictions)
+- "Testing Your Policies" section showing `explain()` in vitest
+- Migration guide from CASL, Casbin, and accesscontrol
+- "When NOT to Use This" section with honest boundary-setting
+- Performance section with real benchmark numbers
+- Standalone example (`examples/standalone/`) — single-file, no HTTP server
+
+### Changed
+
+- Features restructured into Core / Observability / Integration / Performance tiers
+- Server Mode section expanded with polyglot use-case framing
+- `{} as MySchema` pattern explained in Quick Start
+- `schema` option description updated in API Reference
+
 ## [0.3.1] - 2026-02-28
 
 ### Added

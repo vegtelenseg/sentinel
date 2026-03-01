@@ -28,11 +28,11 @@ This library was built from a different starting point:
 
 ---
 
-### What's New in 0.3.1
+### What's New in 0.3.2
 
-- CommonJS build output alongside ESM for wider compatibility
-- Automated npm publish with provenance
-- Dual ESM/CJS via tsup
+- README rewrite: evaluation walkthrough, concepts glossary, patterns & recipes, migration guide, benchmark data
+- Standalone example (`examples/standalone/`) — no HTTP server needed
+- "When NOT to Use This" and "Testing Your Policies" sections
 
 See the full [CHANGELOG](./CHANGELOG.md).
 
