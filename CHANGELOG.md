@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-03-23
+
+### Changed
+
+- README and CHANGELOG in published package now match 0.4.0 release notes (docs were updated after initial 0.4.0 publish)
+
+## [0.4.0] - 2026-03-23
+
+### Added
+
+- Runtime detection for async conditions — `evaluate()` and `explain()` throw a clear error when they encounter an async condition, guiding you to use `evaluateAsync()` or `explainAsync()` instead of failing silently
+- `evaluateAsync()` and `explainAsync()` now work without the `asyncConditions` flag — no opt-in required
+
+### Deprecated
+
+- `asyncConditions` engine option — will be removed in v2. Async conditions are now detected automatically; use the `*Async` methods when you have async conditions.
+
+### Fixed
+
+- Silent deny when async conditions were used with sync APIs without the `asyncConditions` flag — now throws with a helpful error message
+
 ## [0.3.3] - 2026-03-01
 
 ### Added
