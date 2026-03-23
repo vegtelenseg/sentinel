@@ -28,7 +28,7 @@ This library was built from a different starting point:
 
 ---
 
-### What's New in 0.4.0
+### What's New in 0.4.1
 
 - **Async conditions without opt-in** — No more `asyncConditions: true` flag. Use `evaluateAsync()`, `explainAsync()`, or `permittedAsync()` when you have async conditions; the engine detects them and throws a clear error if you use the sync API by mistake.
 - `asyncConditions` option deprecated (will be removed in v2)
