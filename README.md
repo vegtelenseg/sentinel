@@ -28,11 +28,10 @@ This library was built from a different starting point:
 
 ---
 
-### What's New in 0.3.3
+### What's New in 0.4.0
 
-- Hono middleware — `honoGuard()` via `@siremzam/sentinel/middleware/hono`
-- README rewrite: evaluation walkthrough, concepts glossary, patterns & recipes, migration guide, benchmark data
-- Standalone example (`examples/standalone/`) — no HTTP server needed
+- **Async conditions without opt-in** — No more `asyncConditions: true` flag. Use `evaluateAsync()`, `explainAsync()`, or `permittedAsync()` when you have async conditions; the engine detects them and throws a clear error if you use the sync API by mistake.
+- `asyncConditions` option deprecated (will be removed in v2)
 
 See the full [CHANGELOG](./CHANGELOG.md).
 
