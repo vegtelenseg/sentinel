@@ -32,6 +32,19 @@ function escapeRegexMeta(s: string): string {
   return s.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function isThenable(value: unknown): value is PromiseLike<unknown> {
+  return (
+    value != null &&
+    typeof value === "object" &&
+    typeof (value as PromiseLike<unknown>).then === "function"
+  );
+}
+
+const ASYNC_CONDITION_EVALUATE_MSG =
+  "Async condition encountered. Use evaluateAsync() instead.";
+const ASYNC_CONDITION_EXPLAIN_MSG =
+  "Async condition encountered. Use explainAsync() instead.";
+
 function compileActionPatterns(actions: string[] | "*"): RegExp[] | null {
   if (actions === "*") return null;
   const patterns: RegExp[] = [];
@@ -362,6 +375,9 @@ export class AccessEngine<S extends SchemaDefinition> {
         for (let i = 0; i < rule.conditions.length; i++) {
           try {
             const result = rule.conditions[i]!(ctx);
+            if (isThenable(result)) {
+              throw new Error(ASYNC_CONDITION_EXPLAIN_MSG);
+            }
             if (result !== true) {
               conditionResults.push({ index: i, passed: false });
               allConditionsPassed = false;
@@ -369,6 +385,12 @@ export class AccessEngine<S extends SchemaDefinition> {
               conditionResults.push({ index: i, passed: true });
             }
           } catch (err) {
+            if (
+              err instanceof Error &&
+              err.message === ASYNC_CONDITION_EXPLAIN_MSG
+            ) {
+              throw err;
+            }
             conditionResults.push({
               index: i,
               passed: false,
@@ -552,8 +574,18 @@ export class AccessEngine<S extends SchemaDefinition> {
     if (!rule.conditions) return true;
     for (let i = 0; i < rule.conditions.length; i++) {
       try {
-        if (rule.conditions[i]!(ctx) !== true) return false;
+        const result = rule.conditions[i]!(ctx);
+        if (isThenable(result)) {
+          throw new Error(ASYNC_CONDITION_EVALUATE_MSG);
+        }
+        if (result !== true) return false;
       } catch (err) {
+        if (
+          err instanceof Error &&
+          err.message === ASYNC_CONDITION_EVALUATE_MSG
+        ) {
+          throw err;
+        }
         this.emitConditionError(rule.id, i, err);
         return false;
       }
