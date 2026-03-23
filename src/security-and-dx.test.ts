@@ -450,10 +450,27 @@ describe("DX: engine.explain()", () => {
     const user = makeUser("u1", [{ role: "admin" }]);
     expect(() => engine.explain(user, "invoice:read", "invoice")).toThrow("explainAsync");
   });
+
+  it("throws clear error when explain() hits async condition without flag", () => {
+    const engine = new AccessEngine<TestSchema>({ schema });
+    engine.addRule(
+      allow<TestSchema>()
+        .id("async-explain")
+        .roles("member")
+        .actions("report:export")
+        .on("report")
+        .when(async () => true)
+        .build(),
+    );
+    const user = makeUser("u1", [{ role: "member" }]);
+    expect(() => engine.explain(user, "report:export", "report")).toThrow(
+      "Async condition encountered. Use explainAsync() instead.",
+    );
+  });
 });
 
 describe("DX: explainAsync()", () => {
-  it("works with async conditions", async () => {
+  it("works with async conditions (with asyncConditions flag)", async () => {
     const engine = new AccessEngine<TestSchema>({ schema, asyncConditions: true });
     engine.addRule(
       allow<TestSchema>()
@@ -470,6 +487,22 @@ describe("DX: explainAsync()", () => {
 
     expect(result.allowed).toBe(true);
     expect(result.evaluatedRules[0]!.conditionResults[0]!.passed).toBe(true);
+  });
+
+  it("works with async conditions without asyncConditions flag", async () => {
+    const engine = new AccessEngine<TestSchema>({ schema });
+    engine.addRule(
+      allow<TestSchema>()
+        .id("async-no-flag")
+        .roles("member")
+        .actions("report:export")
+        .on("report")
+        .when(async (ctx) => ctx.subject.attributes?.["canExport"] === true)
+        .build(),
+    );
+    const user = makeUser("u1", [{ role: "member" }], { canExport: true });
+    const result = await engine.explainAsync(user, "report:export", "report");
+    expect(result.allowed).toBe(true);
   });
 });
 

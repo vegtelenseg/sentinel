@@ -245,6 +245,39 @@ describe("Async conditions", () => {
       "evaluateAsync",
     );
   });
+
+  it("evaluateAsync works without asyncConditions flag", async () => {
+    const engine = new AccessEngine<TestSchema>({ schema });
+    engine.addRule(
+      allow<TestSchema>()
+        .id("async-no-flag")
+        .roles("member")
+        .actions("report:export")
+        .on("report")
+        .when(async (ctx) => ctx.subject.attributes?.["canExport"] === true)
+        .build(),
+    );
+    const user = makeUser("u9", [{ role: "member" }], { canExport: true });
+    const decision = await engine.evaluateAsync(user, "report:export", "report");
+    expect(decision.allowed).toBe(true);
+  });
+
+  it("throws clear error when evaluate() hits async condition without flag", () => {
+    const engine = new AccessEngine<TestSchema>({ schema });
+    engine.addRule(
+      allow<TestSchema>()
+        .id("async-condition")
+        .roles("member")
+        .actions("report:export")
+        .on("report")
+        .when(async () => true)
+        .build(),
+    );
+    const user = makeUser("u10", [{ role: "member" }]);
+    expect(() => engine.evaluate(user, "report:export", "report")).toThrow(
+      "Async condition encountered. Use evaluateAsync() instead.",
+    );
+  });
 });
 
 // ---------------------------------------------------------------------------

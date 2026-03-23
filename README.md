@@ -325,12 +325,11 @@ Conditions receive the full `EvaluationContext` — subject, action, resource, r
 
 ### Async Conditions
 
-For conditions that need database lookups or API calls:
+For conditions that need database lookups or API calls, use async functions and the `*Async` evaluation methods:
 
 ```typescript
 const engine = new AccessEngine<MySchema>({
   schema: {} as MySchema,
-  asyncConditions: true,
 });
 
 engine.addRule(
@@ -348,7 +347,7 @@ engine.addRule(
 const decision = await engine.evaluateAsync(user, "report:export", "report");
 ```
 
-When `asyncConditions` is enabled, use `evaluateAsync()`, `permittedAsync()`, and `explainAsync()` instead of their synchronous counterparts.
+Use `evaluateAsync()`, `permittedAsync()`, and `explainAsync()` when you have async conditions. If you accidentally call the synchronous `evaluate()` or `explain()` with async conditions, the engine throws a clear error guiding you to the async API.
 
 ### Wildcard Action Patterns
 
@@ -986,7 +985,7 @@ See [SECURITY.md](./SECURITY.md) for responsible disclosure instructions.
 | `defaultEffect` | `"deny"` (default) or `"allow"` |
 | `onDecision` | Listener called on every evaluation |
 | `onConditionError` | Called when a condition throws (fail-closed) |
-| `asyncConditions` | Enable async condition support |
+| `asyncConditions` | *(deprecated)* When true, sync methods throw immediately. Will be removed in v2. Async conditions are now detected automatically. |
 | `strictTenancy` | Throw if tenantId is omitted for tenant-scoped subjects |
 | `roleHierarchy` | A `RoleHierarchy` instance |
 | `cacheSize` | LRU cache capacity (0 = disabled) |

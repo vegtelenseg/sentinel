@@ -206,9 +206,14 @@ export interface EngineOptions<S extends SchemaDefinition> {
   onDecision?: DecisionListener<S>;
   onConditionError?: ConditionErrorHandler;
   /**
-   * When true, async conditions are awaited.
-   * When false (default), only synchronous conditions are supported
-   * and evaluate is guaranteed synchronous.
+   * When true, sync methods (evaluate, explain, permitted) throw immediately
+   * to force use of evaluateAsync, explainAsync, permittedAsync.
+   * When false (default), async conditions are detected at runtime and throw
+   * with a clear error pointing to the async API.
+   *
+   * @deprecated This option is deprecated and will be removed in v2. Async
+   * conditions are now detected automatically. Use evaluateAsync(),
+   * explainAsync(), or permittedAsync() when you have async conditions.
    */
   asyncConditions?: boolean;
   /**
