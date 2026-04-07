@@ -5,96 +5,45 @@
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](https://www.npmjs.com/package/@siremzam/sentinel)
 [![license](https://img.shields.io/npm/l/@siremzam/sentinel)](./LICENSE)
 
-**TypeScript-first, domain-driven authorization engine for modern SaaS apps.**
+**All your permission logic in one place. Type-safe. Multi-tenant. Explainable.**
 
-Most Node.js authorization libraries were built in the CRUD era — they model permissions as `create`, `read`, `update`, `delete` on "resources." But modern apps don't think that way. They think in domain verbs: `invoice:approve`, `project:archive`, `user:impersonate`.
+Most auth libraries give you `create`, `read`, `update`, `delete` and call it a day. But your app has `invoice:approve`, your users are admin in one tenant and viewer in another, and when access breaks, nobody can tell you why without grepping the entire codebase.
 
-This library was built from a different starting point:
+Sentinel replaces scattered role checks with a single policy engine — domain actions instead of CRUD, tenant-scoped roles by default, and every decision tells you exactly which rule matched and why.
 
-- **Your domain actions are not CRUD.** Model `order:ship`, not `update`.
-- **Your tenants are not an afterthought.** A user is admin in Tenant A and viewer in Tenant B. That's the default, not an edge case.
-- **Your types should work for you.** TypeScript autocompletes your actions, resources, and roles everywhere — policies, checks, middleware.
-- **Your authorization decisions should be observable.** Every `allow` and `deny` emits a structured event with timing, reason, and the matched rule.
-- **Your policies belong in one place.** Not scattered across 47 route handlers.
-
-**Zero runtime dependencies. ~1,800 lines. 1:1 test-to-code ratio.**
-
-> ### Try it live
->
-> **[Open the interactive playground →](https://vegtelenseg.github.io/sentinel-example/)**
->
-> Policy editor, multi-tenant evaluation, explain traces, and audit log — all in the browser.
-> ([source](https://github.com/vegtelenseg/sentinel-example))
+Zero dependencies. ~1,800 lines. 1:1 test-to-code ratio.
 
 ---
 
-### What's New in 0.4.1
+### Before and after
 
-- **Async conditions without opt-in** — No more `asyncConditions: true` flag. Use `evaluateAsync()`, `explainAsync()`, or `permittedAsync()` when you have async conditions; the engine detects them and throws a clear error if you use the sync API by mistake.
-- `asyncConditions` option deprecated (will be removed in v2)
+**Without Sentinel** — scattered, fragile, no tenant awareness:
 
-See the full [CHANGELOG](./CHANGELOG.md).
+```typescript
+app.post("/invoices/:id/approve", async (req, res) => {
+  if (
+    user.role === "admin" ||
+    (user.role === "manager" && invoice.ownerId === user.id)
+  ) {
+    // which tenant? who knows
+    // why was this allowed? good luck
+  }
+});
+```
 
----
+**With Sentinel** — centralized, type-safe, explainable:
 
-## Table of Contents
-
-- [How It Compares](#how-it-compares)
-- [Install](#install)
-- [Quick Start](#quick-start)
-- [How Evaluation Works](#how-evaluation-works)
-- [Concepts](#concepts)
-- [Core Features](#core-features)
-  - [Policy Factory](#policy-factory)
-  - [Conditions (ABAC)](#conditions-abac)
-  - [Async Conditions](#async-conditions)
-  - [Wildcard Action Patterns](#wildcard-action-patterns)
-  - [Role Hierarchy](#role-hierarchy)
-  - [Priority and Deny Resolution](#priority-and-deny-resolution)
-  - [Multitenancy](#multitenancy)
-  - [Strict Tenancy](#strict-tenancy)
-  - [Condition Error Handling](#condition-error-handling)
-- [Observability](#observability)
-  - [Decision Events](#decision-events)
-  - [explain() — Debug Authorization](#explain--debug-authorization)
-  - [toAuditEntry()](#toauditentry)
-  - [permitted() — UI Rendering](#permitted--ui-rendering)
-- [Integration](#integration)
-  - [Middleware (Express, Fastify, Hono, NestJS)](#middleware)
-  - [Server Mode](#server-mode)
-  - [JSON Policy Serialization](#json-policy-serialization)
-- [Performance](#performance)
-  - [Evaluation Cache](#evaluation-cache)
-  - [Benchmarks](#benchmarks)
-- [Patterns and Recipes](#patterns-and-recipes)
-- [Testing Your Policies](#testing-your-policies)
-- [Migration Guide](#migration-guide)
-- [When NOT to Use This](#when-not-to-use-this)
-- [Security](#security)
-- [API Reference](#api-reference)
-- [Philosophy](#philosophy)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## How It Compares
-
-| Feature | **@siremzam/sentinel** | Casbin | accesscontrol | CASL |
-|---|---|---|---|---|
-| TypeScript-first (full inference) | Yes | Partial | Partial | Yes |
-| Domain actions (`invoice:approve`) | Native | Via model config | No (CRUD only) | Via `subject` |
-| Multi-tenancy (per-tenant roles) | Built-in | Manual | No | Manual |
-| ABAC conditions | Sync + async | Via matchers | No | Via `conditions` |
-| Role hierarchy | Built-in, cycle-detected | Via model | Built-in | No |
-| Evaluation audit trail | `onDecision` + `toAuditEntry()` | Via watcher | No | No |
-| Debug/explain mode | `explain()` with per-rule trace | No | No | No |
-| UI permission set | `permitted()` returns `Set` | No | `permission.filter()` | `ability.can()` per action |
-| JSON policy storage | `exportRules` / `importRules` + `ConditionRegistry` | CSV / JSON adapters | No | Via `@casl/ability/extra` |
-| Server mode (HTTP microservice) | Built-in (`createAuthServer`) | No | No | No |
-| Middleware | Express, Fastify, Hono, NestJS | Express (community) | Express (community) | Express, NestJS |
-| Dependencies | **0** | 2+ | 2 | 1+ |
-| DSL required | **No** (pure TypeScript) | Yes (Casbin model) | No | No |
+```typescript
+app.post(
+  "/invoices/:id/approve",
+  guard(engine, "invoice:approve", "invoice", {
+    getSubject: (req) => req.user,
+    getResourceContext: (req) => ({ ownerId: req.params.id }),
+    getTenantId: (req) => req.headers["x-tenant-id"],
+  }),
+  handler,
+);
+```
 
 ---
 
@@ -104,14 +53,12 @@ See the full [CHANGELOG](./CHANGELOG.md).
 npm install @siremzam/sentinel
 ```
 
----
-
 ## Quick Start
 
-### 1. Define your schema
+### 1. Define your schema (TypeScript does the rest)
 
 ```typescript
-import { AccessEngine, createPolicyFactory, RoleHierarchy } from "@siremzam/sentinel";
+import { AccessEngine, createPolicyFactory } from "@siremzam/sentinel";
 import type { SchemaDefinition, Subject } from "@siremzam/sentinel";
 
 interface MySchema extends SchemaDefinition {
@@ -129,24 +76,17 @@ interface MySchema extends SchemaDefinition {
 }
 ```
 
-TypeScript now knows every valid role, resource, and action. Autocomplete works everywhere.
+Every role, resource, and action gets autocomplete and compile-time validation. Typos are caught before your code runs.
 
-### 2. Create the engine and add policies
+### 2. Write policies that read like English
 
 ```typescript
 const { allow, deny } = createPolicyFactory<MySchema>();
 
-const engine = new AccessEngine<MySchema>({
-  schema: {} as MySchema,
-});
-```
+const engine = new AccessEngine<MySchema>({ schema: {} as MySchema });
 
-> **Why `{} as MySchema`?** The `schema` field exists purely for TypeScript inference — it carries your type information through the engine at compile time. The runtime value is never read. Think of it as a type witness, not data.
-
-```typescript
 engine.addRules(
   allow()
-    .id("admin-full-access")
     .roles("admin", "owner")
     .anyAction()
     .anyResource()
@@ -154,7 +94,6 @@ engine.addRules(
     .build(),
 
   allow()
-    .id("manager-invoices")
     .roles("manager")
     .actions("invoice:*" as MySchema["actions"])
     .on("invoice")
@@ -162,34 +101,16 @@ engine.addRules(
     .build(),
 
   allow()
-    .id("member-own-invoices")
     .roles("member")
     .actions("invoice:read", "invoice:create")
     .on("invoice")
     .when(ctx => ctx.subject.id === ctx.resourceContext.ownerId)
     .describe("Members can read/create their own invoices")
     .build(),
-
-  deny()
-    .id("no-impersonation")
-    .anyRole()
-    .actions("user:impersonate")
-    .on("user")
-    .describe("Nobody can impersonate by default")
-    .build(),
-
-  allow()
-    .id("owner-impersonate")
-    .roles("owner")
-    .actions("user:impersonate")
-    .on("user")
-    .priority(10)
-    .describe("Except owners, who can impersonate")
-    .build(),
 );
 ```
 
-### 3. Check permissions
+### 3. Check permissions (with tenant context)
 
 ```typescript
 const user: Subject<MySchema> = {
@@ -200,43 +121,94 @@ const user: Subject<MySchema> = {
   ],
 };
 
-// Fluent API
-const decision = engine.can(user).perform("invoice:approve").on("invoice", {}, "tenant-a");
-// decision.allowed === true
+engine.evaluate(user, "invoice:approve", "invoice", {}, "tenant-a");
+// → allowed: true (user is admin in tenant-a)
 
-// Direct evaluation
-const d2 = engine.evaluate(user, "invoice:approve", "invoice", {}, "tenant-b");
-// d2.allowed === false (user is only a viewer in tenant-b)
+engine.evaluate(user, "invoice:approve", "invoice", {}, "tenant-b");
+// → allowed: false (user is only a viewer in tenant-b)
 ```
 
-### 4. Observe decisions
+That's it. You're up and running.
 
-```typescript
-import { toAuditEntry } from "@siremzam/sentinel";
-
-const engine = new AccessEngine<MySchema>({
-  schema: {} as MySchema,
-  onDecision: (decision) => {
-    const entry = toAuditEntry(decision);
-    auditLog.write(entry);
-  },
-});
-```
-
-Or subscribe at runtime:
-
-```typescript
-const unsubscribe = engine.onDecision((d) => auditLog.write(toAuditEntry(d)));
-unsubscribe(); // when done
-```
-
-> **[Open the playground →](https://vegtelenseg.github.io/sentinel-example/)** to see all of this running interactively.
+> **[Try it live in the interactive playground →](https://vegtelenseg.github.io/sentinel-example/)**
+>
+> Policy editor, multi-tenant evaluation, explain traces, and audit log — all in the browser. ([source](https://github.com/vegtelenseg/sentinel-example))
 
 ---
 
-## How Evaluation Works
+## Why Sentinel?
 
-When you call `engine.evaluate(subject, action, resource, context?, tenantId?)`, the engine runs this algorithm:
+### 1. Type-safe schema
+
+Your IDE autocompletes `invoice:approve` and rejects `invoice:aprove`. Every policy, condition, and middleware call is type-checked at compile time. This isn't convenience — it's a security boundary.
+
+```typescript
+// TypeScript catches this at compile time, not in production
+engine.evaluate(user, "invoice:aprove", "invoice");
+//                     ^^^^^^^^^^^^^^^^ — Type error
+```
+
+### 2. Multi-tenancy that doesn't leak
+
+Roles are scoped to tenants in the data model itself. No middleware hacks. No "effective role" workarounds. And `strictTenancy` mode throws if you forget the tenant ID — so cross-tenant bugs surface in development, not from a customer email on Friday.
+
+```typescript
+const engine = new AccessEngine<MySchema>({
+  schema: {} as MySchema,
+  strictTenancy: true, // forget tenantId? this throws, not leaks
+});
+```
+
+### 3. explain() — debug authorization in seconds
+
+When a user reports "I can't access this," don't grep your codebase. Replay the decision:
+
+```typescript
+const result = engine.explain(user, "invoice:approve", "invoice", {}, "tenant-b");
+// result.allowed → false
+// result.reason → "No matching rule — default deny"
+// result.evaluatedRules → per-rule trace: which matched on role, action, resource, conditions
+```
+
+Every evaluation also emits a structured audit event via `onDecision` — who asked, what for, which rule decided it, how long it took.
+
+### 4. Domain actions, not CRUD
+
+`invoice:approve`. `project:archive`. `user:impersonate`. Your authorization speaks your domain language, not `create`/`read`/`update`/`delete`.
+
+---
+
+<details>
+<summary><strong>How it compares</strong></summary>
+
+| Feature | **Sentinel** | Casbin | accesscontrol | CASL |
+|---|---|---|---|---|
+| TypeScript-first (full inference) | Yes | Partial | Partial | Yes |
+| Domain actions (`invoice:approve`) | Native | Via model config | No (CRUD only) | Via `subject` |
+| Multi-tenancy (per-tenant roles) | Built-in | Manual | No | Manual |
+| ABAC conditions | Sync + async | Via matchers | No | Via `conditions` |
+| Role hierarchy | Built-in, cycle-detected | Via model | Built-in | No |
+| Audit trail | `onDecision` + `toAuditEntry()` | Via watcher | No | No |
+| Debug/explain | `explain()` with per-rule trace | No | No | No |
+| UI permission set | `permitted()` returns `Set` | No | `permission.filter()` | `ability.can()` per action |
+| JSON policy storage | `exportRules` / `importRules` | CSV / JSON adapters | No | Via `@casl/ability/extra` |
+| Server mode (HTTP microservice) | Built-in | No | No | No |
+| Middleware | Express, Fastify, Hono, NestJS | Express (community) | Express (community) | Express, NestJS |
+| Dependencies | **0** | 2+ | 2 | 1+ |
+| DSL required | **No** (pure TypeScript) | Yes | No | No |
+
+</details>
+
+---
+
+## Docs
+
+### Everything below is organized by topic. Click to expand what you need.
+
+<details>
+<summary><strong>How evaluation works</strong></summary>
+
+When you call `engine.evaluate(subject, action, resource, context?, tenantId?)`:
 
 ```
 1. Resolve the subject's roles
@@ -261,16 +233,12 @@ When you call `engine.evaluate(subject, action, resource, context?, tenantId?)`,
    └─ No match → default deny
 ```
 
-Every decision includes the matched rule (or null), a human-readable reason, evaluation duration, and full request context. Decisions with only unconditional rule matches are eligible for LRU caching.
+Every decision includes the matched rule (or null), a human-readable reason, evaluation duration, and full request context.
 
----
-
-## Concepts
-
-If you're new to authorization systems, here's a quick glossary:
+</details>
 
 <details>
-<summary><strong>Expand glossary</strong></summary>
+<summary><strong>Concepts glossary</strong></summary>
 
 | Term | Meaning |
 |---|---|
@@ -278,28 +246,24 @@ If you're new to authorization systems, here's a quick glossary:
 | **ABAC** | Attribute-Based Access Control. Permissions depend on attributes of the subject, resource, or environment — expressed as conditions. |
 | **Subject** | The entity requesting access — typically a user. Has an `id` and an array of `roles`. |
 | **Resource** | The thing being accessed — `"invoice"`, `"project"`, `"user"`. |
-| **Action** | What the subject wants to do to the resource — `"invoice:approve"`, `"project:archive"`. Uses `resource:verb` format. |
-| **Policy Rule** | A single authorization rule: "allow managers to perform invoice:approve on invoice." Has an effect (`allow` or `deny`), and optionally conditions, priority, and a description. |
-| **Condition** | A function attached to a rule that receives the evaluation context and returns `true` or `false`. Used for ABAC — e.g., "only if the user owns the resource." |
-| **Tenant** | An organizational unit in a multi-tenant system (e.g., a company). Users can have different roles in different tenants. |
-| **Decision** | The result of evaluating a request — contains `allowed`, the matched rule, timing, and a human-readable reason. |
-| **Effect** | Either `"allow"` or `"deny"`. Determines what happens when a rule matches. |
+| **Action** | What the subject wants to do — `"invoice:approve"`, `"project:archive"`. Uses `resource:verb` format. |
+| **Policy Rule** | A single authorization rule with an effect (`allow` or `deny`), and optionally conditions, priority, and a description. |
+| **Condition** | A function attached to a rule that receives the evaluation context and returns `true`/`false`. Used for ABAC. |
+| **Tenant** | An organizational unit in a multi-tenant system. Users can have different roles in different tenants. |
+| **Decision** | The result of an evaluation — contains `allowed`, the matched rule, timing, and a human-readable reason. |
 | **Priority** | A number (default 0) that determines rule evaluation order. Higher priority rules are checked first. |
 | **Role Hierarchy** | A definition that one role inherits all permissions of another — e.g., `admin` inherits from `manager`. |
 
 </details>
 
----
-
-## Core Features
+<details>
+<summary><strong>Core features</strong></summary>
 
 ### Policy Factory
 
-`createPolicyFactory` eliminates the `<MySchema>` generic parameter on every rule:
+`createPolicyFactory` eliminates the `<MySchema>` generic on every rule:
 
 ```typescript
-import { createPolicyFactory } from "@siremzam/sentinel";
-
 const { allow, deny } = createPolicyFactory<MySchema>();
 
 allow().roles("admin").anyAction().anyResource().build();
@@ -308,7 +272,7 @@ deny().roles("viewer").actions("report:export").on("report").build();
 
 ### Conditions (ABAC)
 
-Attach predicates to any rule. All conditions on a rule must pass for it to match:
+Attach predicates to any rule. All conditions on a rule must pass:
 
 ```typescript
 allow()
@@ -324,13 +288,9 @@ Conditions receive the full `EvaluationContext` — subject, action, resource, r
 
 ### Async Conditions
 
-For conditions that need database lookups or API calls, use async functions and the `*Async` evaluation methods:
+For conditions that need database lookups or API calls:
 
 ```typescript
-const engine = new AccessEngine<MySchema>({
-  schema: {} as MySchema,
-});
-
 engine.addRule(
   allow()
     .roles("member")
@@ -346,25 +306,18 @@ engine.addRule(
 const decision = await engine.evaluateAsync(user, "report:export", "report");
 ```
 
-Use `evaluateAsync()`, `permittedAsync()`, and `explainAsync()` when you have async conditions. If you accidentally call the synchronous `evaluate()` or `explain()` with async conditions, the engine throws a clear error guiding you to the async API.
+Use `evaluateAsync()`, `permittedAsync()`, and `explainAsync()` for async conditions. The engine throws a clear error if you accidentally use the sync API with async conditions.
 
 ### Wildcard Action Patterns
 
-Use `*` in action patterns to match groups of actions:
-
 ```typescript
-// Match all invoice actions
 allow().roles("manager").actions("invoice:*" as MySchema["actions"]).on("invoice").build();
-
-// Match all read actions across resources
 allow().roles("viewer").actions("*:read" as MySchema["actions"]).anyResource().build();
 ```
 
-Wildcard patterns are pre-compiled to regexes at `addRule()` time — no per-evaluation regex cost.
+Wildcards are pre-compiled to regexes at `addRule()` time — no per-evaluation cost.
 
 ### Role Hierarchy
-
-Define that higher roles inherit all permissions of lower roles:
 
 ```typescript
 import { RoleHierarchy } from "@siremzam/sentinel";
@@ -379,16 +332,6 @@ const engine = new AccessEngine<MySchema>({
   schema: {} as MySchema,
   roleHierarchy: hierarchy,
 });
-
-engine.addRules(
-  allow().id("viewer-read").roles("viewer").actions("invoice:read").on("invoice").build(),
-  allow().id("member-create").roles("member").actions("invoice:create").on("invoice").build(),
-  allow().id("admin-approve").roles("admin").actions("invoice:approve").on("invoice").build(),
-);
-
-// Admins can read (inherited from viewer), create (from member), AND approve (their own)
-// Members can read (from viewer) and create, but NOT approve
-// Viewers can only read
 ```
 
 Cycles are detected at definition time and throw immediately.
@@ -397,19 +340,15 @@ Cycles are detected at definition time and throw immediately.
 
 - Higher `priority` wins (default: 0)
 - At equal priority, `deny` wins over `allow`
-- This lets you create broad deny rules with targeted allow overrides
 
 ```typescript
-// Deny impersonation for everyone at priority 0
 deny().anyRole().actions("user:impersonate").on("user").build();
-
-// Allow it for owners at priority 10 — this wins
 allow().roles("owner").actions("user:impersonate").on("user").priority(10).build();
 ```
 
 ### Multitenancy
 
-Role assignments are tenant-scoped. When evaluating with a `tenantId`, only roles assigned to that tenant (or globally, with no tenantId) are considered:
+Role assignments are tenant-scoped. When evaluating with a `tenantId`, only roles for that tenant (or global roles) are considered:
 
 ```typescript
 const user: Subject<MySchema> = {
@@ -421,16 +360,16 @@ const user: Subject<MySchema> = {
   ],
 };
 
-// In acme-corp context: user has admin + member roles
 engine.evaluate(user, "invoice:approve", "invoice", {}, "acme-corp");
+// admin + member roles
 
-// In globex context: user has viewer + member roles
 engine.evaluate(user, "invoice:approve", "invoice", {}, "globex");
+// viewer + member roles
 ```
 
 ### Strict Tenancy
 
-Prevents accidental cross-tenant access by requiring explicit `tenantId` when the subject has tenant-scoped roles:
+Prevents accidental cross-tenant access:
 
 ```typescript
 const engine = new AccessEngine<MySchema>({
@@ -438,16 +377,13 @@ const engine = new AccessEngine<MySchema>({
   strictTenancy: true,
 });
 
-// THROWS — tenantId is required because user has tenant-scoped roles
 engine.evaluate(user, "invoice:read", "invoice");
-
-// OK — explicit tenant context
-engine.evaluate(user, "invoice:read", "invoice", {}, "acme");
+// THROWS — tenantId required for tenant-scoped subjects
 ```
 
 ### Condition Error Handling
 
-Conditions that throw are treated as `false` (fail-closed). Surface errors with `onConditionError`:
+Conditions that throw are treated as `false` (fail-closed):
 
 ```typescript
 const engine = new AccessEngine<MySchema>({
@@ -458,13 +394,14 @@ const engine = new AccessEngine<MySchema>({
 });
 ```
 
----
+</details>
 
-## Observability
+<details>
+<summary><strong>Observability</strong></summary>
 
 ### Decision Events
 
-Every evaluation emits a structured `Decision` event. Subscribe at construction or at runtime:
+Every evaluation emits a structured `Decision` event:
 
 ```typescript
 import { toAuditEntry } from "@siremzam/sentinel";
@@ -477,9 +414,9 @@ const engine = new AccessEngine<MySchema>({
   },
 });
 
-// Or at runtime
+// Or subscribe at runtime
 const unsubscribe = engine.onDecision((d) => auditLog.write(toAuditEntry(d)));
-unsubscribe(); // when done
+unsubscribe();
 ```
 
 ### explain() — Debug Authorization
@@ -489,8 +426,8 @@ Full evaluation trace showing every rule, whether it matched, and why:
 ```typescript
 const result = engine.explain(user, "invoice:approve", "invoice");
 
-console.log(result.allowed); // false
-console.log(result.reason);  // "No matching rule — default deny"
+console.log(result.allowed);
+console.log(result.reason);
 
 for (const evalRule of result.evaluatedRules) {
   console.log({
@@ -508,11 +445,9 @@ For async conditions, use `engine.explainAsync()`.
 
 ### toAuditEntry()
 
-Convert a `Decision` to a serialization-safe format for logging, queuing, or storage:
+Convert a `Decision` to a serialization-safe format:
 
 ```typescript
-import { toAuditEntry } from "@siremzam/sentinel";
-
 const decision = engine.evaluate(user, "invoice:approve", "invoice");
 const entry = toAuditEntry(decision);
 // Safe to JSON.stringify — no functions, no circular references
@@ -520,7 +455,7 @@ const entry = toAuditEntry(decision);
 
 ### permitted() — UI Rendering
 
-Ask "what can this user do?" to drive button visibility and menu items:
+Drive button visibility and menu items:
 
 ```typescript
 const actions = engine.permitted(
@@ -535,13 +470,12 @@ const actions = engine.permitted(
 
 For async conditions, use `engine.permittedAsync()`.
 
----
+</details>
 
-## Integration
+<details>
+<summary><strong>Integration & middleware</strong></summary>
 
-### Middleware
-
-**Express:**
+### Express
 
 ```typescript
 import { guard } from "@siremzam/sentinel/middleware/express";
@@ -557,7 +491,7 @@ app.post(
 );
 ```
 
-**Fastify:**
+### Fastify
 
 ```typescript
 import { fastifyGuard } from "@siremzam/sentinel/middleware/fastify";
@@ -571,7 +505,7 @@ fastify.post("/invoices/:id/approve", {
 }, handler);
 ```
 
-**Hono:**
+### Hono
 
 ```typescript
 import { honoGuard } from "@siremzam/sentinel/middleware/hono";
@@ -587,7 +521,7 @@ app.post(
 );
 ```
 
-**NestJS:**
+### NestJS
 
 ```typescript
 import {
@@ -619,28 +553,20 @@ No dependency on `@nestjs/common` or `reflect-metadata`. Uses a WeakMap for meta
 
 ### Server Mode
 
-Run the engine as a standalone HTTP authorization microservice. This is useful when authorization logic needs to be shared across polyglot services (e.g., a Go API and a Python worker both calling the same policy engine), or when you want to decouple authorization decisions from your application servers entirely.
+Run the engine as a standalone HTTP authorization microservice for polyglot architectures:
 
 ```typescript
-import { AccessEngine } from "@siremzam/sentinel";
 import { createAuthServer } from "@siremzam/sentinel/server";
-
-const engine = new AccessEngine<MySchema>({ schema: {} as MySchema });
-engine.addRules(/* ... */);
 
 const server = createAuthServer({
   engine,
   port: 3100,
-  authenticate: (req) => {
-    return req.headers["x-api-key"] === process.env.AUTH_SERVER_KEY;
-  },
-  maxBodyBytes: 1024 * 1024, // 1 MB (default)
+  authenticate: (req) => req.headers["x-api-key"] === process.env.AUTH_SERVER_KEY,
+  maxBodyBytes: 1024 * 1024,
 });
 
 await server.start();
 ```
-
-**Endpoints:**
 
 | Endpoint | Method | Description |
 |---|---|---|
@@ -652,7 +578,7 @@ Zero dependencies. Uses Node's built-in `http` module.
 
 ### JSON Policy Serialization
 
-Store policies in a database, config file, or load them from an API:
+Store policies in a database, config file, or load from an API:
 
 ```typescript
 import {
@@ -661,10 +587,7 @@ import {
   ConditionRegistry,
 } from "@siremzam/sentinel";
 
-// Export rules to JSON
 const json = exportRulesToJson(engine.getRules());
-
-// Import rules back (validates effect and id fields)
 const rules = importRulesFromJson<MySchema>(json);
 engine.addRules(...rules);
 ```
@@ -674,20 +597,16 @@ Conditions use a named registry since functions can't be serialized:
 ```typescript
 const conditions = new ConditionRegistry<MySchema>();
 conditions.register("isOwner", (ctx) => ctx.subject.id === ctx.resourceContext.ownerId);
-conditions.register("isActive", (ctx) => ctx.resourceContext.status === "active");
 
 const rules = importRulesFromJson<MySchema>(json, conditions);
 ```
 
-Unknown condition names throw with a helpful error listing available conditions.
+</details>
 
----
-
-## Performance
+<details>
+<summary><strong>Performance & benchmarks</strong></summary>
 
 ### Evaluation Cache
-
-For hot paths where the same subject/action/resource is checked repeatedly:
 
 ```typescript
 const engine = new AccessEngine<MySchema>({
@@ -703,7 +622,7 @@ engine.clearCache();     // manual control
 engine.cacheStats;       // { size: 0, maxSize: 1000 }
 ```
 
-Only unconditional rule evaluations are cached — conditional results are always re-evaluated because they depend on `resourceContext`.
+Only unconditional evaluations are cached — conditional results are always re-evaluated.
 
 ### Benchmarks
 
@@ -717,24 +636,21 @@ Measured on Node v18.18.0, Apple Silicon (ARM64). Run `npm run benchmark` to rep
 | `permitted` (18 actions) | 60.2 µs / 17k ops/s | 718 µs / 1.4k ops/s | 18,924 µs / 53 ops/s |
 | `explain` (full trace) | 22.4 µs / 45k ops/s | 564 µs / 1.8k ops/s | 6,444 µs / 155 ops/s |
 
-Most SaaS apps have 10–50 rules. At 100 rules, a single evaluation takes **4.3 µs** — you can run 230,000 authorization checks per second on a single core. With caching enabled, that drops to **0.6 µs**.
+Most SaaS apps have 10–50 rules. At 100 rules, a single evaluation takes **4.3 µs** — 230,000 checks per second on a single core. With caching: **0.6 µs**.
 
----
+</details>
 
-## Patterns and Recipes
-
-Real-world authorization scenarios and how to model them.
+<details>
+<summary><strong>Patterns & recipes</strong></summary>
 
 ### Ownership — "Users can only edit their own resources"
 
 ```typescript
 allow()
-  .id("edit-own-invoice")
   .roles("member")
   .actions("invoice:update")
   .on("invoice")
   .when(ctx => ctx.subject.id === ctx.resourceContext.ownerId)
-  .describe("Members can edit their own invoices")
   .build();
 ```
 
@@ -742,7 +658,6 @@ allow()
 
 ```typescript
 allow()
-  .id("trial-access")
   .roles("trial")
   .actions("report:export")
   .on("report")
@@ -751,7 +666,6 @@ allow()
     const daysSince = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
     return daysSince <= 14;
   })
-  .describe("Trial users can export for 14 days")
   .build();
 ```
 
@@ -761,12 +675,10 @@ allow()
 const BETA_TENANTS = new Set(["acme-corp", "initech"]);
 
 allow()
-  .id("beta-analytics")
   .anyRole()
   .actions("analytics:view")
   .on("analytics")
   .when(ctx => BETA_TENANTS.has(ctx.tenantId ?? ""))
-  .describe("Analytics dashboard is in beta for select tenants")
   .build();
 ```
 
@@ -774,7 +686,6 @@ allow()
 
 ```typescript
 allow()
-  .id("api-rate-limit")
   .roles("member")
   .actions("api:call")
   .on("api")
@@ -782,38 +693,30 @@ allow()
     const usage = await rateLimiter.check(ctx.subject.id);
     return usage.remaining > 0;
   })
-  .describe("Members can call API within rate limit")
   .build();
 ```
 
 ### Broad Deny with Targeted Override
 
 ```typescript
-// Deny all destructive actions at priority 0
 deny()
-  .id("freeze-destructive")
   .anyRole()
   .actions("project:delete", "project:archive")
   .on("project")
-  .describe("Destructive project actions are frozen")
   .build();
 
-// Allow owners to override at priority 10
 allow()
-  .id("owner-override")
   .roles("owner")
   .actions("project:delete", "project:archive")
   .on("project")
   .priority(10)
-  .describe("Owners can still delete/archive their projects")
   .build();
 ```
 
-### IP-Based Restriction via Async Condition
+### IP-Based Restriction
 
 ```typescript
 allow()
-  .id("admin-from-office")
   .roles("admin")
   .actions("settings:update")
   .on("settings")
@@ -822,15 +725,13 @@ allow()
     const geo = await geoService.lookup(ip);
     return geo.isOfficeNetwork;
   })
-  .describe("Admin settings changes only from office network")
   .build();
 ```
 
----
+</details>
 
-## Testing Your Policies
-
-Authorization policies are security-critical code — they should be tested like any other business logic. The `explain()` method is purpose-built for this:
+<details>
+<summary><strong>Testing your policies</strong></summary>
 
 ```typescript
 import { describe, it, expect } from "vitest";
@@ -859,7 +760,6 @@ describe("invoice policies", () => {
       "acme",
     );
 
-    // Find the ownership rule and verify the condition failed
     const ownershipRule = result.evaluatedRules.find(
       e => e.rule.id === "member-own-invoices",
     );
@@ -867,7 +767,6 @@ describe("invoice policies", () => {
   });
 
   it("prevents cross-tenant access", () => {
-    // User is admin in acme, viewer in globex
     const resultAcme = engine.evaluate(user, "invoice:approve", "invoice", {}, "acme");
     const resultGlobex = engine.evaluate(user, "invoice:approve", "invoice", {}, "globex");
 
@@ -877,11 +776,12 @@ describe("invoice policies", () => {
 });
 ```
 
-`explain()` returns per-rule evaluation details — which rules matched on role, action, and resource, and which conditions passed or failed. This makes your tests self-documenting: when a test fails, the explain trace tells you exactly *why* the decision changed.
+`explain()` returns per-rule evaluation details — which rules matched on role, action, and resource, and which conditions passed or failed. When a test fails, the trace tells you exactly *why*.
 
----
+</details>
 
-## Migration Guide
+<details>
+<summary><strong>Migration guides</strong></summary>
 
 ### Coming from CASL
 
@@ -889,12 +789,12 @@ describe("invoice policies", () => {
 |---|---|
 | `defineAbility(can => { can('read', 'Article') })` | `allow().actions("article:read").on("article").build()` |
 | `ability.can('read', 'Article')` | `engine.evaluate(user, "article:read", "article")` |
-| `subject('Article', article)` | Actions use `resource:verb` format natively — no wrapper needed |
+| `subject('Article', article)` | Actions use `resource:verb` format natively |
 | `conditions: { authorId: user.id }` | `.when(ctx => ctx.subject.id === ctx.resourceContext.authorId)` |
 | No multi-tenancy | Built-in: `{ role: "admin", tenantId: "acme" }` |
 | No explain/debug | `engine.explain()` gives per-rule trace |
 
-**Key difference:** CASL uses MongoDB-style conditions (declarative objects). Sentinel uses functions, which gives you full TypeScript expressiveness — async calls, date math, external lookups — with compile-time type safety on the context.
+**Key difference:** CASL uses MongoDB-style conditions (declarative objects). Sentinel uses functions — async calls, date math, external lookups — with compile-time type safety.
 
 ### Coming from Casbin
 
@@ -906,54 +806,23 @@ describe("invoice policies", () => {
 | Custom matchers for ABAC | `.when()` conditions with full TypeScript |
 | Role manager | `RoleHierarchy` with cycle detection |
 
-**Key difference:** Casbin requires learning its own DSL for model definitions. Sentinel is pure TypeScript — your IDE autocompletes everything, and your policy definitions are type-checked at compile time.
+**Key difference:** Casbin requires its own DSL. Sentinel is pure TypeScript — your IDE autocompletes everything.
 
 ### Coming from accesscontrol
 
 | accesscontrol | Sentinel |
 |---|---|
 | `ac.grant('admin').createAny('video')` | `allow().roles("admin").actions("video:create").on("video").build()` |
-| CRUD only: create, read, update, delete | Domain verbs: `invoice:approve`, `order:ship` |
-| `ac.can('admin').createAny('video')` | `engine.evaluate(user, "video:create", "video")` |
+| CRUD only | Domain verbs: `invoice:approve`, `order:ship` |
 | No conditions/ABAC | Full ABAC with `.when()` conditions |
 | No multi-tenancy | Built-in per-tenant role assignments |
 
-**Key difference:** accesscontrol is locked into CRUD semantics. If your app has domain-specific actions (approve, archive, impersonate, ship), you'll fight the library. Sentinel treats domain verbs as first-class.
+**Key difference:** accesscontrol is locked into CRUD semantics. Sentinel treats domain verbs as first-class.
 
----
+</details>
 
-## When NOT to Use This
-
-Being honest about boundaries:
-
-- **You need a full policy language.** If you want Rego (OPA), Cedar (AWS), or a declarative DSL, this isn't that. Sentinel policies are TypeScript code, not a separate language.
-- **You need a Zanzibar-style relationship graph.** If your authorization model is "who can access this Google Doc?" with deeply nested sharing relationships, use [SpiceDB](https://authzed.com/) or [OpenFGA](https://openfga.dev/).
-- **You need a hosted authorization service.** If you want a managed SaaS solution rather than an embedded library, look at [Permit.io](https://permit.io/) or [Oso Cloud](https://www.osohq.com/).
-- **Your model is truly just CRUD on REST resources.** If `create`, `read`, `update`, `delete` is all you need and you don't have tenants, simpler libraries like [accesscontrol](https://www.npmjs.com/package/accesscontrol) may be sufficient.
-
-Sentinel is built for TypeScript-first SaaS applications with domain-specific actions, multi-tenant requirements, and a need for observable, testable authorization logic.
-
----
-
-## Security
-
-### Design Principles
-
-- **Deny by default.** If no rule matches, the answer is no.
-- **Fail closed.** If a condition throws, it evaluates to `false`. No silent privilege escalation.
-- **Frozen rules.** Rules are `Object.freeze`'d on add. Mutation after insertion is impossible.
-- **Cache safety.** Only unconditional rule evaluations are cached. Conditional results (which depend on `resourceContext`) are never cached, preventing stale cache entries from granting access.
-- **Strict tenancy.** Optional mode that throws if `tenantId` is omitted for subjects with tenant-scoped roles, preventing accidental cross-tenant privilege escalation.
-- **Import validation.** `importRulesFromJson()` validates the `effect` field and rejects invalid or missing values.
-- **Server hardening.** `createAuthServer` supports an `authenticate` callback (rejects with 401 on failure) and configurable `maxBodyBytes` (default 1 MB) to prevent DoS via oversized request bodies.
-
-### Reporting Vulnerabilities
-
-See [SECURITY.md](./SECURITY.md) for responsible disclosure instructions.
-
----
-
-## API Reference
+<details>
+<summary><strong>API reference</strong></summary>
 
 ### AccessEngine\<S\>
 
@@ -984,7 +853,6 @@ See [SECURITY.md](./SECURITY.md) for responsible disclosure instructions.
 | `defaultEffect` | `"deny"` (default) or `"allow"` |
 | `onDecision` | Listener called on every evaluation |
 | `onConditionError` | Called when a condition throws (fail-closed) |
-| `asyncConditions` | *(deprecated)* When true, sync methods throw immediately. Will be removed in v2. Async conditions are now detected automatically. |
 | `strictTenancy` | Throw if tenantId is omitted for tenant-scoped subjects |
 | `roleHierarchy` | A `RoleHierarchy` instance |
 | `cacheSize` | LRU cache capacity (0 = disabled) |
@@ -1050,19 +918,35 @@ Returned by `engine.explain()`:
 - `allowed`, `effect`, `reason`, `durationMs`
 - `evaluatedRules` — array of `RuleEvaluation<S>` with per-rule and per-condition details
 
----
-
-## Philosophy
-
-1. **Policies belong in one place.** Not scattered across middleware, handlers, and services.
-2. **Authorization is not authentication.** This library does not care how you identify users. It cares what they're allowed to do.
-3. **Types are documentation.** If your IDE can't autocomplete it, the API is wrong.
-4. **Every decision is observable.** If you can't audit it, you can't trust it.
-5. **Deny by default.** If no rule matches, the answer is no.
-6. **Fail closed.** If a condition throws, the answer is no.
-7. **Zero dependencies.** The core engine, server, and middleware use nothing outside Node.js built-ins.
+</details>
 
 ---
+
+## When NOT to use this
+
+- **You need a full policy language.** If you want Rego (OPA) or Cedar (AWS), this isn't that. Sentinel policies are TypeScript code.
+- **You need Zanzibar-style relationship graphs.** For "who can access this Google Doc?" with nested sharing, use [SpiceDB](https://authzed.com/) or [OpenFGA](https://openfga.dev/).
+- **You need a hosted authorization service.** Look at [Permit.io](https://permit.io/) or [Oso Cloud](https://www.osohq.com/).
+- **Your model is truly just CRUD.** If `create`/`read`/`update`/`delete` is all you need with no tenants, simpler libraries may suffice.
+
+## Security
+
+- **Deny by default.** No rule match = no access.
+- **Fail closed.** Condition throws = `false`. No silent privilege escalation.
+- **Frozen rules.** Rules are `Object.freeze`'d on add. Mutation after insertion is impossible.
+- **Cache safety.** Only unconditional evaluations are cached. Conditional results are never cached.
+- **Strict tenancy.** Throws if `tenantId` is omitted for tenant-scoped subjects.
+- **Import validation.** `importRulesFromJson()` validates the `effect` field and rejects invalid values.
+- **Server hardening.** `createAuthServer` supports `authenticate` callback and configurable `maxBodyBytes`.
+
+See [SECURITY.md](./SECURITY.md) for responsible disclosure.
+
+## What's New in 0.4.1
+
+- **Async conditions without opt-in** — No more `asyncConditions: true` flag. Use `evaluateAsync()`, `explainAsync()`, or `permittedAsync()` when you have async conditions; the engine detects them automatically.
+- `asyncConditions` option deprecated (will be removed in v2)
+
+See the full [CHANGELOG](./CHANGELOG.md).
 
 ## Contributing
 
