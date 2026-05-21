@@ -21,6 +21,17 @@ npm test
 | `npm run typecheck` | TypeScript type checking |
 | `npm run build` | Compile to `dist/` |
 | `npm run benchmark` | Run performance benchmarks |
+| `npm run docs:dev` | VitePress docs site locally (http://localhost:5173/sentinel/) |
+| `npm run docs:build` | Build static docs to `docs/.vitepress/dist` |
+| `npm run docs:preview` | Preview production docs build |
+
+## Documentation
+
+Docs live in [`docs/`](./docs/) and are published with [VitePress](https://vitepress.dev/) to **https://vegtelenseg.github.io/sentinel/** on every push to `main` (workflow: [`.github/workflows/docs.yml`](./.github/workflows/docs.yml)).
+
+When editing markdown under `docs/`, prefer site-root links (`/getting-started/quickstart`) for the home breadcrumb, and full GitHub URLs for files outside `docs/` (e.g. `SECURITY.md`, `examples/`).
+
+**First-time GitHub Pages setup:** Repository **Settings → Pages → Build and deployment → Source:** set to **GitHub Actions**.
 
 ## Pull Request Process
 

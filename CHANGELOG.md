@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-05-21
+
+### Added
+
+- Documentation site under `docs/` — introduction, concepts, guides, patterns, comparisons, and API reference
+- VitePress build with local search, sidebar navigation, and home page
+- GitHub Pages deployment workflow (`.github/workflows/docs.yml`) — published at [vegtelenseg.github.io/sentinel](https://vegtelenseg.github.io/sentinel/)
+- `npm run docs:dev`, `docs:build`, and `docs:preview` scripts
+- README badges for documentation and docs deploy status
+
+### Changed
+
+- README reworked as a landing page linking to the full docs site
+- `package.json` `homepage` set to the documentation URL (was playground-only)
+
 ## [0.4.1] - 2026-03-23
 
 ### Changed
