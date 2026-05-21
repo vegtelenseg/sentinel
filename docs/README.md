@@ -1,10 +1,10 @@
 # Documentation hub
 
-Welcome to the documentation for **[@siremzam/sentinel](https://www.npmjs.com/package/@siremzam/sentinel)** — a TypeScript-first authorization engine for SaaS applications.
+**[@siremzam/sentinel](https://www.npmjs.com/package/@siremzam/sentinel)** is a TypeScript-first authorization engine for SaaS applications.
 
-> **Web site:** [vegtelenseg.github.io/sentinel](https://vegtelenseg.github.io/sentinel/) (search, sidebar, dark mode). This page is the same content for browsing in the repo.
+> **Web site:** [vegtelenseg.github.io/sentinel](https://vegtelenseg.github.io/sentinel/) (search, sidebar, dark mode). This page mirrors the site for browsing in the repo.
 
-This documentation is organized the way you would expect from a mature library: progressive learning paths, deep concept pages, practical guides, and a complete API reference. Every page explains **what** something is, **why** it exists, and **how** to use it — with enough context that you should not need to read the source to understand behavior.
+Use the sections below or the sidebar to find what you need.
 
 ---
 
@@ -21,18 +21,14 @@ This documentation is organized the way you would expect from a mature library: 
 
 ## Getting started
 
-A linear path from zero to a working policy engine.
-
 1. [Installation](./getting-started/installation.md) — add the package, understand exports and bundle size
 2. [Quickstart](./getting-started/quickstart.md) — schema, policies, evaluation, and tenant context in one walkthrough
 
-After the quickstart, read [How evaluation works](./concepts/how-evaluation-works.md) so every later feature clicks into place.
+After the quickstart, read [How evaluation works](./concepts/how-evaluation-works.md) before diving into advanced features.
 
 ---
 
 ## Core concepts
-
-Read these in order if you are new to authorization engines, or jump to what you need.
 
 | Concept | What you will learn |
 |---|---|
@@ -49,8 +45,6 @@ Read these in order if you are new to authorization engines, or jump to what you
 ---
 
 ## Guides
-
-Task-oriented documentation for real application work.
 
 ### Writing and managing policies
 
@@ -95,8 +89,6 @@ Task-oriented documentation for real application work.
 
 ## Reference
 
-Complete API surface — use when you know what you need and want signatures and behavior tables.
-
 - [`AccessEngine`](./reference/access-engine.md)
 - [`RuleBuilder` / `createPolicyFactory`](./reference/rule-builder.md)
 - [Types](./reference/types.md) — `Subject`, `Decision`, `EvaluationContext`, and more
@@ -114,15 +106,4 @@ Complete API surface — use when you know what you need and want signatures and
 - [Examples](https://github.com/vegtelenseg/sentinel/tree/main/examples) — runnable `standalone` and `express-multi-tenant` projects
 - [CHANGELOG](https://github.com/vegtelenseg/sentinel/blob/main/CHANGELOG.md)
 - [CONTRIBUTING](https://github.com/vegtelenseg/sentinel/blob/main/CONTRIBUTING.md)
-
----
-
-## How to read this documentation
-
-**Concept pages** build mental models. Read them when you are designing your authorization layer or onboarding a teammate.
-
-**Guides** assume you understand the concepts and show complete, copy-paste-friendly examples with prose around every snippet.
-
-**Reference pages** document every option and method without narrative — the single source of truth for behavior.
-
-If something is missing or unclear, [open an issue](https://github.com/vegtelenseg/sentinel/issues) — gaps in docs are treated as bugs.
+- Something missing or unclear? [Open an issue](https://github.com/vegtelenseg/sentinel/issues)
