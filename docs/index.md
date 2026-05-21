@@ -40,4 +40,4 @@ features:
 | Learn how decisions are made | [How evaluation works](./concepts/how-evaluation-works) |
 | Compare with other libraries | [Feature matrix](./comparisons/feature-matrix) |
 
-Browse the full table of contents in the [documentation hub](./README).
+Full index: [documentation hub](./README).
