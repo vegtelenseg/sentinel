@@ -31,7 +31,7 @@ Docs live in [`docs/`](./docs/) and are published with [VitePress](https://vitep
 
 When editing markdown under `docs/`, prefer site-root links (`/getting-started/quickstart`) for the home breadcrumb, and full GitHub URLs for files outside `docs/` (e.g. `SECURITY.md`, `examples/`).
 
-**First-time GitHub Pages setup:** Repository **Settings → Pages → Build and deployment → Source:** set to **GitHub Actions**.
+**First-time GitHub Pages setup:** Repository **Settings → Pages → Build and deployment → Source:** set to **GitHub Actions**. If deploy fails with `Failed to create deployment (status: 404)`, Pages is not enabled yet — enable it in Settings (or re-run the workflow after enabling).
 
 ## Pull Request Process
 
