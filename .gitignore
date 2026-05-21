@@ -4,3 +4,5 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 *.log
+docs/.vitepress/dist
+docs/.vitepress/cache
