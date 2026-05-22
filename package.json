@@ -80,6 +80,10 @@
   "bugs": {
     "url": "https://github.com/vegtelenseg/sentinel/issues"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "sideEffects": false,
   "devDependencies": {
     "@types/node": "^22.0.0",
