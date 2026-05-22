@@ -7,31 +7,11 @@ hero:
   tagline: Type-safe policies, multi-tenant roles, and explainable decisions — zero dependencies.
   actions:
     - theme: brand
-      text: Get started
+      text: Quickstart
       link: /getting-started/quickstart
-    - theme: alt
-      text: What is Sentinel?
-      link: /introduction/what-is-sentinel
-    - theme: alt
-      text: Compare libraries
-      link: /comparisons/feature-matrix
     - theme: alt
       text: Try the playground
       link: https://vegtelenseg.github.io/sentinel-example/
-
-features:
-  - title: Type-safe schema
-    details: Roles, resources, and actions are defined once. Typos in invoice:aprove fail at compile time, not in production.
-  - title: Multi-tenancy built in
-    details: Per-tenant role assignments and strict tenancy mode — tenant context travels with every evaluation.
-  - title: explain() traces
-    details: When access breaks, replay every rule — role, action, resource, and condition results — in one call.
-  - title: Domain actions
-    details: invoice:approve and project:archive are first-class — not forced into CRUD-shaped permissions.
-  - title: Framework middleware
-    details: Ready-made guards for Express, Fastify, Hono, and NestJS — plug in your engine, no custom middleware to write.
-  - title: Zero dependencies
-    details: ~1,800 lines, 1:1 test ratio. Optional subpath imports for middleware and server mode only.
 ---
 
 ## Framework middleware

@@ -6,8 +6,15 @@ export default defineConfig({
   lang: "en-US",
   base: "/sentinel/",
   cleanUrls: true,
-  head: [["link", { rel: "icon", href: "/sentinel/favicon.ico" }]],
+  head: [
+    ["link", { rel: "icon", href: "/sentinel/favicon.svg", type: "image/svg+xml" }],
+  ],
   themeConfig: {
+    logo: { src: "/logo.svg", alt: "Sentinel" },
+    outline: {
+      level: [2, 3],
+      label: "On this page",
+    },
     nav: [
       { text: "Docs", link: "/introduction/what-is-sentinel", activeMatch: "/introduction/" },
       { text: "Guide", link: "/getting-started/quickstart", activeMatch: "/getting-started/" },
