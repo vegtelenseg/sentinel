@@ -17,6 +17,7 @@ Use the sections below or the sidebar to find what you need.
 | See why teams pick Sentinel over scattered `if (role)` checks | [Why Sentinel?](./introduction/why-sentinel.md) |
 | Try policies in the browser without installing anything | [Interactive playground](https://vegtelenseg.github.io/sentinel-example/) |
 | Upgrade between versions | [Upgrading](./getting-started/upgrading.md) |
+| Wire Sentinel into Express, Fastify, Hono, or NestJS | [Frameworks](#frameworks) below |
 
 ---
 
@@ -62,15 +63,18 @@ After the quickstart, read [How evaluation works](./concepts/how-evaluation-work
 - [UI permissions](./guides/ui-permissions.md) — `permitted()` for buttons, menus, and route guards
 - [Evaluation cache](./guides/evaluation-cache.md) — when caching is safe and when it is not
 
-### Framework integration
+## Frameworks
 
+Ready-made middleware and guards — import for your stack instead of writing authorization middleware yourself.
+
+- [Middleware reference](./reference/middleware.md) — exports, options, and shared types
 - [Express](./guides/express.md)
 - [Fastify](./guides/fastify.md)
 - [Hono](./guides/hono.md)
 - [NestJS](./guides/nestjs.md)
 - [Server mode](./guides/server-mode.md) — HTTP microservice for polyglot stacks
 
-### Patterns
+## Patterns
 
 - [Ownership and resource-scoped access](./patterns/ownership.md)
 - [Common recipes](./patterns/common-recipes.md) — time gates, feature flags, deny-with-override, IP restrictions

@@ -71,6 +71,13 @@ export default defineConfig({
           { text: "UI permissions", link: "/guides/ui-permissions" },
           { text: "Evaluation cache", link: "/guides/evaluation-cache" },
           { text: "Performance", link: "/guides/performance" },
+        ],
+      },
+      {
+        text: "Frameworks",
+        collapsed: false,
+        items: [
+          { text: "Overview", link: "/reference/middleware" },
           { text: "Express", link: "/guides/express" },
           { text: "Fastify", link: "/guides/fastify" },
           { text: "Hono", link: "/guides/hono" },
