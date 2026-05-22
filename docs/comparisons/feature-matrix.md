@@ -1,12 +1,8 @@
----
-layout: page
----
-
 # Feature comparison
 
 [← Documentation home](../README.md)
 
-<div class="feature-matrix">
+<div class="table-scroll">
 
 | Feature | **Sentinel** | Casbin | accesscontrol | CASL |
 | --- | --- | --- | --- | --- |

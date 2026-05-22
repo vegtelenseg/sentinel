@@ -1,31 +1,49 @@
-/* Full-width comparison tables — no horizontal scroll on typical viewports */
-.feature-matrix {
-  overflow-x: visible;
-}
-
-.feature-matrix table {
+/**
+ * VitePress does not ship default styles for markdown tables.
+ * Match doc chrome: borders, header band, alternating row bands.
+ */
+.vp-doc table {
   width: 100%;
-  table-layout: fixed;
-  font-size: 0.875rem;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
   display: table;
 }
 
-.feature-matrix th,
-.feature-matrix td {
-  white-space: normal;
-  word-wrap: break-word;
-  overflow-wrap: anywhere;
+.vp-doc th,
+.vp-doc td {
+  border: 1px solid var(--vp-c-divider);
+  padding: 0.625rem 0.875rem;
+  text-align: left;
   vertical-align: top;
-  line-height: 1.45;
-  padding: 0.55rem 0.65rem;
 }
 
-.feature-matrix th:first-child,
-.feature-matrix td:first-child {
-  width: 17%;
+.vp-doc th {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+  background-color: var(--vp-c-bg-alt);
 }
 
-.feature-matrix th:not(:first-child),
-.feature-matrix td:not(:first-child) {
-  width: 20.75%;
+.vp-doc tbody tr:nth-child(even) {
+  background-color: var(--vp-c-bg-soft);
+}
+
+.vp-doc tbody tr:nth-child(odd) {
+  background-color: var(--vp-c-bg);
+}
+
+.vp-doc table code {
+  font-size: 0.8125rem;
+}
+
+/* Wide tables: scroll inside content column instead of the whole page */
+.vp-doc .table-scroll {
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+}
+
+.vp-doc .table-scroll table {
+  margin: 0;
+  min-width: 640px;
 }
