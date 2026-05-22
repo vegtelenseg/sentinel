@@ -74,7 +74,6 @@ export interface AccessEngineOptions<S extends SchemaDefinition> extends EngineO
 export class AccessEngine<S extends SchemaDefinition> {
   private compiled: CompiledRule<S>[] = [];
   private listeners: DecisionListener<S>[] = [];
-  private asyncConditions: boolean;
   private _defaultDeny: boolean;
   private _strictTenancy: boolean;
   private hierarchy?: RoleHierarchy<S>;
@@ -82,7 +81,6 @@ export class AccessEngine<S extends SchemaDefinition> {
   private conditionErrorHandler?: ConditionErrorHandler;
 
   constructor(options: AccessEngineOptions<S>) {
-    this.asyncConditions = options.asyncConditions ?? false;
     this._defaultDeny = (options.defaultEffect ?? "deny") === "deny";
     this._strictTenancy = options.strictTenancy ?? false;
     this.hierarchy = options.roleHierarchy;
@@ -199,11 +197,6 @@ export class AccessEngine<S extends SchemaDefinition> {
     resourceContext: ResourceContext = {},
     tenantId?: string,
   ): Decision<S> {
-    if (this.asyncConditions) {
-      throw new Error(
-        "Engine has asyncConditions enabled. Use evaluateAsync() instead.",
-      );
-    }
     this.validateInput(subject, action, resource);
     this.enforceTenancy(subject, tenantId);
 
@@ -305,9 +298,7 @@ export class AccessEngine<S extends SchemaDefinition> {
   ): Set<InferAction<S>> {
     const allowed = new Set<InferAction<S>>();
     for (const action of actions) {
-      const decision = this.asyncConditions
-        ? (() => { throw new Error("Use permittedAsync() with asyncConditions enabled."); })()
-        : this.evaluate(subject, action, resource, resourceContext, tenantId);
+      const decision = this.evaluate(subject, action, resource, resourceContext, tenantId);
       if (decision.allowed) {
         allowed.add(action);
       }
@@ -347,11 +338,6 @@ export class AccessEngine<S extends SchemaDefinition> {
     resourceContext: ResourceContext = {},
     tenantId?: string,
   ): ExplainResult<S> {
-    if (this.asyncConditions) {
-      throw new Error(
-        "Engine has asyncConditions enabled. Use explainAsync() instead.",
-      );
-    }
     this.enforceTenancy(subject, tenantId);
     const start = performance.now();
     const ctx = this.buildContext(subject, action, resource, resourceContext, tenantId);

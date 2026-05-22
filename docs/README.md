@@ -16,6 +16,7 @@ Use the sections below or the sidebar to find what you need.
 | Install and run my first evaluation in five minutes | [Quickstart](./getting-started/quickstart.md) |
 | See why teams pick Sentinel over scattered `if (role)` checks | [Why Sentinel?](./introduction/why-sentinel.md) |
 | Try policies in the browser without installing anything | [Interactive playground](https://vegtelenseg.github.io/sentinel-example/) |
+| Upgrade between versions | [Upgrading](./getting-started/upgrading.md) |
 
 ---
 

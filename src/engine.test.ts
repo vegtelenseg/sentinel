@@ -219,7 +219,7 @@ describe("Conditions (ABAC)", () => {
 
 describe("Async conditions", () => {
   it("evaluateAsync supports promise-based conditions", async () => {
-    const engine = new AccessEngine<TestSchema>({ schema, asyncConditions: true });
+    const engine = new AccessEngine<TestSchema>({ schema });
     engine.addRule(
       allow<TestSchema>()
         .id("async-check")
@@ -238,15 +238,24 @@ describe("Async conditions", () => {
     expect(decision.allowed).toBe(true);
   });
 
-  it("throws if evaluate() is called with asyncConditions enabled", () => {
-    const engine = new AccessEngine<TestSchema>({ schema, asyncConditions: true });
-    const user = makeUser("u1", [{ role: "admin" }]);
-    expect(() => engine.evaluate(user, "invoice:read", "invoice")).toThrow(
+  it("throws if evaluate() hits an async condition", () => {
+    const engine = new AccessEngine<TestSchema>({ schema });
+    engine.addRule(
+      allow<TestSchema>()
+        .id("async-sync")
+        .roles("member")
+        .actions("report:export")
+        .on("report")
+        .when(async () => true)
+        .build(),
+    );
+    const user = makeUser("u1", [{ role: "member" }]);
+    expect(() => engine.evaluate(user, "report:export", "report")).toThrow(
       "evaluateAsync",
     );
   });
 
-  it("evaluateAsync works without asyncConditions flag", async () => {
+  it("evaluateAsync works without opt-in flag", async () => {
     const engine = new AccessEngine<TestSchema>({ schema });
     engine.addRule(
       allow<TestSchema>()

@@ -47,6 +47,25 @@ When editing markdown under `docs/`, prefer site-root links (`/getting-started/q
 - Avoid comments that just narrate what the code does. Comments should explain *why*, not *what*.
 - Use the fluent builder pattern consistent with the existing API surface.
 
+## Releasing
+
+Maintainers follow this checklist for each release:
+
+1. Update [CHANGELOG.md](./CHANGELOG.md) ([Keep a Changelog](https://keepachangelog.com/) format)
+2. Bump the version in [package.json](./package.json)
+3. Verify locally:
+   ```bash
+   npm test
+   npm run typecheck
+   npm run lint
+   npm run build
+   npm pack --dry-run
+   ```
+4. Commit, tag (`vX.Y.Z`), and push the tag
+5. Create a [GitHub Release](https://github.com/vegtelenseg/sentinel/releases/new) from the tag — [`.github/workflows/publish.yml`](./.github/workflows/publish.yml) publishes to npm with provenance
+
+Patch releases (0.4.x) are non-breaking. Major releases (1.0.0+) follow the [API stability policy](./docs/introduction/api-stability.md).
+
 ## Reporting Bugs
 
 Open a GitHub issue with:

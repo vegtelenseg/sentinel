@@ -445,13 +445,7 @@ describe("DX: engine.explain()", () => {
     expect(evaluated.conditionResults[1]!.error).toBe("DB down");
   });
 
-  it("throws when asyncConditions is enabled", () => {
-    const engine = new AccessEngine<TestSchema>({ schema, asyncConditions: true });
-    const user = makeUser("u1", [{ role: "admin" }]);
-    expect(() => engine.explain(user, "invoice:read", "invoice")).toThrow("explainAsync");
-  });
-
-  it("throws clear error when explain() hits async condition without flag", () => {
+  it("throws clear error when explain() hits async condition", () => {
     const engine = new AccessEngine<TestSchema>({ schema });
     engine.addRule(
       allow<TestSchema>()
@@ -470,8 +464,8 @@ describe("DX: engine.explain()", () => {
 });
 
 describe("DX: explainAsync()", () => {
-  it("works with async conditions (with asyncConditions flag)", async () => {
-    const engine = new AccessEngine<TestSchema>({ schema, asyncConditions: true });
+  it("works with async conditions", async () => {
+    const engine = new AccessEngine<TestSchema>({ schema });
     engine.addRule(
       allow<TestSchema>()
         .id("async-check")
@@ -489,7 +483,7 @@ describe("DX: explainAsync()", () => {
     expect(result.evaluatedRules[0]!.conditionResults[0]!.passed).toBe(true);
   });
 
-  it("works with async conditions without asyncConditions flag", async () => {
+  it("works with async conditions on default engine", async () => {
     const engine = new AccessEngine<TestSchema>({ schema });
     engine.addRule(
       allow<TestSchema>()
@@ -552,7 +546,7 @@ describe("DX: toAuditEntry()", () => {
 
 describe("DX: permittedAsync()", () => {
   it("works with async conditions", async () => {
-    const engine = new AccessEngine<TestSchema>({ schema, asyncConditions: true });
+    const engine = new AccessEngine<TestSchema>({ schema });
     engine.addRule(
       allow<TestSchema>()
         .id("member-read")

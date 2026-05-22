@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-05-22
+
+### Breaking
+
+- Removed deprecated `asyncConditions` engine option — async conditions are detected at runtime; use `evaluateAsync()`, `explainAsync()`, or `permittedAsync()` when rules contain promise-returning conditions
+
+### Added
+
+- API stability policy ([docs/introduction/api-stability.md](./docs/introduction/api-stability.md))
+- Upgrading guide ([docs/getting-started/upgrading.md](./docs/getting-started/upgrading.md))
+- Express and Fastify middleware test suites (12 tests)
+- Example policy tests in `examples/express-multi-tenant/policies.test.ts`
+- GitHub issue templates for bugs and feature requests
+- Coverage thresholds in Vitest config (85% lines/branches, 90% functions)
+- Non-blocking benchmark job in CI
+
+### Changed
+
+- SECURITY.md supported versions updated for 1.x and 0.4.x
+- CONTRIBUTING.md release checklist added
+- README links to API stability and upgrading docs
+
 ## [0.4.3] - 2026-05-21
 
 ### Changed

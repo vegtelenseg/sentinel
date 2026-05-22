@@ -19,7 +19,6 @@ new AccessEngine<S>(options: AccessEngineOptions<S>)
 | `strictTenancy` | `false` | Throw if `tenantId` omitted when required |
 | `roleHierarchy` | — | `RoleHierarchy<S>` instance |
 | `cacheSize` | `0` (off) | LRU capacity |
-| `asyncConditions` | deprecated | Use async evaluate APIs instead |
 
 ## Methods
 

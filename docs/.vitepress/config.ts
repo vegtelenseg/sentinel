@@ -8,7 +8,6 @@ export default defineConfig({
   cleanUrls: true,
   head: [["link", { rel: "icon", href: "/sentinel/favicon.ico" }]],
   themeConfig: {
-    logo: { text: "Sentinel" },
     nav: [
       { text: "Docs", link: "/introduction/what-is-sentinel", activeMatch: "/introduction/" },
       { text: "Guide", link: "/getting-started/quickstart", activeMatch: "/getting-started/" },
@@ -31,6 +30,7 @@ export default defineConfig({
           { text: "Why Sentinel?", link: "/introduction/why-sentinel" },
           { text: "When not to use", link: "/introduction/when-not-to-use" },
           { text: "Security model", link: "/introduction/security" },
+          { text: "API stability", link: "/introduction/api-stability" },
         ],
       },
       {
@@ -39,6 +39,7 @@ export default defineConfig({
         items: [
           { text: "Installation", link: "/getting-started/installation" },
           { text: "Quickstart", link: "/getting-started/quickstart" },
+          { text: "Upgrading", link: "/getting-started/upgrading" },
         ],
       },
       {

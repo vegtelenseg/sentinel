@@ -84,3 +84,27 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm pack --dry-run
+
+  benchmark:
+    name: Benchmark
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run benchmark 2>&1 | tee benchmark-output.txt
+
+      - name: Upload benchmark output
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-output
+          path: benchmark-output.txt
+          retention-days: 14
