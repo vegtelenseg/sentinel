@@ -36,7 +36,7 @@ features:
 
 ## Framework middleware
 
-Sentinel ships **middleware for your stack** — not a DIY auth layer you have to build yourself. Import the guard for your framework, pass the engine and options, and protect routes in a few lines.
+Sentinel ships **middleware for your stack** — not a DIY **AuthZ** layer you have to build yourself. Import the guard for your framework, pass the engine and options, and protect routes in a few lines.
 
 | Framework | Guide |
 | --- | --- |

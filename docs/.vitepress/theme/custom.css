@@ -1,0 +1,31 @@
+/* Full-width comparison tables — no horizontal scroll on typical viewports */
+.feature-matrix {
+  overflow-x: visible;
+}
+
+.feature-matrix table {
+  width: 100%;
+  table-layout: fixed;
+  font-size: 0.875rem;
+  display: table;
+}
+
+.feature-matrix th,
+.feature-matrix td {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  vertical-align: top;
+  line-height: 1.45;
+  padding: 0.55rem 0.65rem;
+}
+
+.feature-matrix th:first-child,
+.feature-matrix td:first-child {
+  width: 17%;
+}
+
+.feature-matrix th:not(:first-child),
+.feature-matrix td:not(:first-child) {
+  width: 20.75%;
+}
