@@ -9,6 +9,8 @@
 
 **All your permission logic in one place. Type-safe. Multi-tenant. Explainable.**
 
+Stable **1.0** — semver guarantees apply from this release. See [API stability policy](./docs/introduction/api-stability.md).
+
 Most auth libraries give you `create`, `read`, `update`, `delete` and call it a day. Your app has `invoice:approve`, users are admin in one tenant and viewer in another, and when access breaks nobody can tell you why without grepping the codebase.
 
 Sentinel replaces scattered role checks with a single policy engine — domain actions instead of CRUD, tenant-scoped roles by default, and every decision tells you exactly which rule matched and why.
@@ -128,5 +130,7 @@ Deny by default. Fail closed on condition errors. Frozen rules. See [Security mo
 ## Contributing & license
 
 - [CONTRIBUTING.md](./CONTRIBUTING.md)
+- [API stability policy](./docs/introduction/api-stability.md)
+- [Upgrading guide](./docs/getting-started/upgrading.md)
 - [CHANGELOG.md](./CHANGELOG.md)
 - [MIT](./LICENSE)

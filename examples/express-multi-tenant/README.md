@@ -10,6 +10,13 @@ A minimal Express app demonstrating `@siremzam/sentinel` in a realistic multi-te
 - `permitted()` for UI rendering (which buttons to show)
 - `explain()` for debugging authorization decisions
 - `toAuditEntry()` for structured audit logs
+- Table-driven policy tests in [`policies.test.ts`](./policies.test.ts) using `explain()` traces
+
+Run policy tests from the repository root:
+
+```bash
+npm test -- examples/express-multi-tenant/policies.test.ts
+```
 
 ## Run It
 

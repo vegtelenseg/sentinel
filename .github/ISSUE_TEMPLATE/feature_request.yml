@@ -1,0 +1,32 @@
+name: Feature request
+description: Suggest an improvement to @siremzam/sentinel
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem you're trying to solve and why it fits Sentinel's scope.
+        See [When not to use Sentinel](https://vegtelenseg.github.io/sentinel/introduction/when-not-to-use) for boundaries.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What authorization need isn't met today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How would you like it to work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds or other libraries you've looked at.
