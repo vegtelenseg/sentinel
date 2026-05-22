@@ -62,7 +62,11 @@ Maintainers follow this checklist for each release:
    npm pack --dry-run
    ```
 4. Commit, tag (`vX.Y.Z`), and push the tag
-5. Create a [GitHub Release](https://github.com/vegtelenseg/sentinel/releases/new) from the tag — [`.github/workflows/publish.yml`](./.github/workflows/publish.yml) publishes to npm with provenance
+5. Create a [GitHub Release](https://github.com/vegtelenseg/sentinel/releases/new) from the tag — [`.github/workflows/publish.yml`](./.github/workflows/publish.yml) publishes to npm via [Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC; provenance is generated automatically)
+
+**npm Trusted Publishing (one-time):** On [npmjs.com](https://www.npmjs.com/) → `@siremzam/sentinel` → **Settings** → **Trusted publishing** → **GitHub Actions** → repository `vegtelenseg/sentinel`, workflow filename `publish.yml`.
+
+Do **not** publish from your laptop with `--provenance` — that flag only works in CI. To publish manually (emergency only): `npm login` then `npm publish --access public` (no `--provenance`).
 
 Patch releases (0.4.x) are non-breaking. Major releases (1.0.0+) follow the [API stability policy](./docs/introduction/api-stability.md).
 
