@@ -2,7 +2,9 @@
 
 [← Documentation home](/)
 
-Store policy **data** in a database or config service while keeping condition **logic** in code.
+Split **what** is stored (rule metadata in JSON) from **how** conditions run (TypeScript functions you register at import time). JSON rules reference conditions by name; a `ConditionRegistry` maps those names to implementations you control.
+
+For the full API table, see [Serialization reference](../reference/serialization.md).
 
 ---
 
@@ -29,10 +31,12 @@ const rules = importRulesFromJson<AppSchema>(json, conditions);
 engine.addRules(...rules);
 ```
 
-JSON rules reference conditions by **name**; the registry resolves names to functions at import time.
+Each name in the JSON must be registered before import — unregistered names fail at load time, not silently at evaluation.
 
 ---
 
 ## Related
 
 - [Serialization reference](../reference/serialization.md)
+- [Conditions: JSON policies](../concepts/conditions.md#json-policies)
+- [Security model](../introduction/security.md#json-import-validation)

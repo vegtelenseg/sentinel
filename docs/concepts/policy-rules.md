@@ -8,7 +8,7 @@ A **policy rule** is the atomic unit of authorization in Sentinel. The engine ho
 
 ## Anatomy of a rule
 
-Built with the fluent API:
+Built with [`RuleBuilder`](../reference/rule-builder.md):
 
 ```typescript
 allow()
@@ -69,6 +69,21 @@ A rule **candidate** must match on three axes before conditions run:
 3. **Resource** — requested resource is listed or rule is `anyResource()`
 
 If any axis fails, the rule is skipped for that evaluation.
+
+```typescript
+// Matches: admin role ∧ invoice:approve action ∧ invoice resource
+allow()
+  .roles("admin")
+  .actions("invoice:approve")
+  .on("invoice")
+  .build();
+
+engine.evaluate(viewer, "invoice:approve", "invoice").allowed; // false — role axis fails
+engine.evaluate(admin, "invoice:read", "invoice").allowed;    // false — action axis fails
+engine.evaluate(admin, "invoice:approve", "project").allowed;   // false — resource axis fails
+```
+
+Use [`explain()`](../guides/explain-and-debugging.md) to see which axis failed for a given request.
 
 ---
 

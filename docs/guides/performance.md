@@ -23,4 +23,11 @@ Most SaaS apps hold **10–50 rules**. At 100 rules, a single `evaluate` is ~4 �
 - Prefer `evaluate` over `permitted` with huge action lists on hot paths.
 - Use `explain` in tests and debugging, not per-request in production hot paths.
 
-→ [Evaluation cache](./evaluation-cache.md)
+---
+
+## Related
+
+- [Evaluation cache](./evaluation-cache.md)
+- [How evaluation works](../concepts/how-evaluation-works.md)
+- [UI permissions](./ui-permissions.md) — `permitted()` cost
+- [AccessEngine reference](../reference/access-engine.md)

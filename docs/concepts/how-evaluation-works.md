@@ -18,7 +18,7 @@ const decision = engine.evaluate(
 );
 ```
 
-The same pipeline powers `explain()`, `permitted()`, and middleware — with different output shapes.
+The same pipeline powers `explain()` and `permitted()` — they differ only in [output shape](../reference/types.md).
 
 ---
 

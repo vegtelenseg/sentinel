@@ -4,7 +4,7 @@
 
 **RBAC** answers: "Does this user have a role that permits this action?" **ABAC** (Attribute-Based Access Control) adds: "...and do the attributes of the subject, resource, and environment satisfy extra predicates?"
 
-In Sentinel, ABAC is implemented as **conditions** — functions on `EvaluationContext`.
+In Sentinel, ABAC is implemented as **conditions** — predicate functions on [`EvaluationContext`](#evaluation-context). Attach them with `.when()` on a [`RuleBuilder`](../reference/rule-builder.md).
 
 ---
 
@@ -54,13 +54,13 @@ When a condition needs I/O:
 })
 ```
 
-You **must** use async APIs:
+You **must** use the async evaluation methods — not the sync ones:
 
-- `evaluateAsync()`
-- `explainAsync()`
-- `permittedAsync()`
-
-Calling `evaluate()` with an async condition throws a clear error directing you to the async method.
+| Sync (throws if async condition) | Async |
+|---|---|
+| `evaluate()` | `evaluateAsync()` |
+| `explain()` | `explainAsync()` |
+| `permitted()` | `permittedAsync()` |
 
 ---
 
@@ -91,9 +91,17 @@ Evaluations that run conditions are **not cached**. Only unconditional paths can
 
 ## JSON policies
 
-Serialized rules reference conditions **by name**. Register implementations in a `ConditionRegistry` at import time.
+Serialized rules reference conditions **by name**. Register implementations in a `ConditionRegistry` at import time — the registry is your security boundary; arbitrary code is never loaded from JSON.
 
-→ [JSON policy serialization](../guides/json-serialization.md)
+```typescript
+const conditions = new ConditionRegistry<AppSchema>();
+conditions.register("isOwner", (ctx) => ctx.subject.id === ctx.resourceContext.ownerId);
+
+const rules = importRulesFromJson<AppSchema>(storedJson, conditions);
+engine.addRules(...rules);
+```
+
+→ [JSON policy serialization](../guides/json-serialization.md) · [Serialization reference](../reference/serialization.md)
 
 ---
 

@@ -2,7 +2,9 @@
 
 [← Documentation home](/)
 
-Backend checks are not enough — buttons and menu items should reflect what the user **can** do. `permitted()` evaluates multiple actions for one resource and returns a **`Set`** of allowed action strings.
+Use [`evaluate()`](../reference/access-engine.md#methods) for one action at a time. Use `permitted()` when a UI needs to know **which** of several actions on one resource are allowed — it returns a `Set` of action strings (e.g. which buttons to show).
+
+Pass the same `resourceContext` you use in API checks so ABAC conditions align.
 
 ---
 
@@ -22,20 +24,37 @@ if (actions.has("invoice:approve")) {
 }
 ```
 
-Pass the same `resourceContext` you would use in API checks so ABAC conditions align.
-
 ---
 
 ## Async
 
+Use `permittedAsync()` when any matching rule has async conditions — same rule as [`evaluateAsync()`](./async-conditions.md#use-async-evaluation-apis):
+
 ```typescript
-const actions = await engine.permittedAsync(user, "invoice", actionList, ctx, tenantId);
+const actions = await engine.permittedAsync(
+  user,
+  "invoice",
+  ["invoice:create", "invoice:read", "invoice:approve", "invoice:send"],
+  { ownerId: user.id },
+  "tenant-a",
+);
 ```
+
+The returned `Set` shape is identical to sync `permitted()`.
 
 ---
 
 ## Performance
 
-`permitted()` runs one evaluation per action. For large action lists at high QPS, consider caching the set per subject/tenant/resource briefly in your app layer.
+`permitted()` runs one evaluation per action in the list. For a handful of UI toggles this is fine; for large action lists at high QPS, cache the resulting set briefly in your app layer (keyed by subject, tenant, and resource).
 
-→ [Performance](./performance.md)
+→ [Performance and benchmarks](./performance.md) · [Evaluation cache](./evaluation-cache.md)
+
+---
+
+## Related
+
+- [AccessEngine reference](../reference/access-engine.md#methods)
+- [Actions and resources](../concepts/actions-and-resources.md)
+- [Conditions (ABAC)](../concepts/conditions.md)
+- [Async conditions](./async-conditions.md)

@@ -2,7 +2,9 @@
 
 [← Documentation home](/)
 
-Production authorization bugs are painful because the answer is often just `false`. `explain()` returns the same decision as `evaluate()` plus a **per-rule trace** — which rules were considered, what matched, and why conditions failed.
+Production authorization bugs are painful when the answer is just `false`. Use `explain()` when you need the same answer as [`evaluate()`](../reference/access-engine.md#methods) **plus** a per-rule trace — which rules were considered, what matched, and why conditions failed.
+
+For the return type, see [`ExplainResult`](../reference/types.md#explainresult).
 
 ---
 
@@ -39,9 +41,19 @@ for (const evalRule of result.evaluatedRules) {
 
 ## Async
 
+Use `explainAsync()` when any candidate rule has async conditions — sync `explain()` throws with a clear error in that case:
+
 ```typescript
-const result = await engine.explainAsync(user, "report:export", "report");
+const result = await engine.explainAsync(
+  user,
+  "report:export",
+  "report",
+  {},
+  tenantId,
+);
 ```
+
+The trace shape is identical to sync `explain()`. See [Async conditions](./async-conditions.md).
 
 ---
 
@@ -54,4 +66,11 @@ const ownershipRule = result.evaluatedRules.find(e => e.rule.id === "member-own-
 expect(ownershipRule?.conditionResults[0]?.passed).toBe(false);
 ```
 
-→ [Testing policies](./testing.md)
+---
+
+## Related
+
+- [AccessEngine reference](../reference/access-engine.md#methods)
+- [Types: ExplainResult](../reference/types.md#explainresult)
+- [Testing policies](./testing.md)
+- [Priority and deny resolution](../concepts/priority-and-deny.md)

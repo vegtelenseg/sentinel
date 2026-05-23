@@ -2,7 +2,9 @@
 
 [← Documentation home](/)
 
-Run Sentinel as a **standalone HTTP service** when non-TypeScript services or edge workers need a central authorization API.
+HTTP wrapper around an in-process [`AccessEngine`](../reference/access-engine.md). Use it when other runtimes (Python, Go, edge workers) need authorization without embedding the TypeScript library — they POST a subject and action, get back a [`Decision`](../reference/types.md#decision).
+
+For Express, Fastify, Hono, or NestJS apps written in TypeScript, use [framework middleware](./express.md) and call the engine directly instead.
 
 ---
 
@@ -20,6 +22,8 @@ const server = createAuthServer({
 
 await server.start();
 ```
+
+Always set `authenticate` in production. Without it, any client on the network can query permissions.
 
 ---
 
@@ -43,6 +47,10 @@ await server.start();
 }
 ```
 
-Always set `authenticate` in production. Without it, any client on the network can query permissions.
+---
 
-→ [Server reference](../reference/server.md)
+## Related
+
+- [Server reference](../reference/server.md)
+- [Security model](../introduction/security.md#server-mode-hardening)
+- [Middleware guides](./express.md) — in-process alternative

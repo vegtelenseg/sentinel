@@ -2,6 +2,12 @@
 
 [← Documentation home](/)
 
+Central authorization engine: holds your policy rules and answers *can this subject perform this action on this resource?* Returns a [`Decision`](./types.md#decision) (or [`ExplainResult`](./types.md#explainresult) when debugging).
+
+Create one instance per app (or per domain), add rules, then call `evaluate()` from HTTP middleware, jobs, or UI code. See [How evaluation works](../concepts/how-evaluation-works.md) for the matching pipeline.
+
+---
+
 ## Constructor
 
 ```typescript
@@ -37,6 +43,16 @@ new AccessEngine<S>(options: AccessEngineOptions<S>)
 | `explainAsync(...)` | Async variant |
 | `can(subject)` | Fluent check helper |
 | `onDecision(listener)` | Subscribe; returns unsubscribe |
-| `allow()` / `deny()` | Rule builders |
+| `allow()` / `deny()` | Return a [`RuleBuilder`](./rule-builder.md) bound to this engine's schema |
 | `clearCache()` | Clear LRU |
 | `cacheStats` | `{ size, maxSize }` or null |
+
+---
+
+## Related
+
+- [Policy factory](../guides/policy-factory.md) — `createPolicyFactory` and engine shorthand
+- [How evaluation works](../concepts/how-evaluation-works.md)
+- [Types](./types.md) — `Decision`, `ExplainResult`
+- [Evaluation cache](../guides/evaluation-cache.md)
+- [Debugging with `explain()`](../guides/explain-and-debugging.md)

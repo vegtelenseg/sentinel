@@ -37,6 +37,18 @@ When a subject has role `admin` in a tenant:
 
 You can write rules only for `viewer` and `member`; `admin` still matches via inheritance.
 
+```typescript
+engine.addRule(
+  allow()
+    .roles("viewer") // only viewer listed — admin inherits this
+    .actions("invoice:read")
+    .on("invoice")
+    .build(),
+);
+
+engine.evaluate(adminUser, "invoice:read", "invoice", {}, "acme").allowed; // true
+```
+
 ---
 
 ## Cycle detection

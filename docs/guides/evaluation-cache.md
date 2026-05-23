@@ -2,7 +2,9 @@
 
 [← Documentation home](/)
 
-Enable an LRU cache when the same subject/action/resource/tenant combinations repeat without depending on `resourceContext`.
+Optional LRU cache inside [`AccessEngine`](../reference/access-engine.md) that memoizes **unconditional** evaluation results. Enable it when the same subject/action/resource/tenant combinations repeat and matching rules do not depend on `resourceContext`.
+
+Conditional evaluations always bypass the cache — see [Conditions and caching](../concepts/conditions.md#conditions-and-caching).
 
 ---
 
@@ -33,4 +35,6 @@ Adding or removing rules **clears** the cache automatically.
 
 ## Related
 
-- [Performance](./performance.md)
+- [Performance and benchmarks](./performance.md)
+- [How evaluation works](../concepts/how-evaluation-works.md#cache-interaction)
+- [AccessEngine reference](../reference/access-engine.md)

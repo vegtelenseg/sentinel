@@ -2,6 +2,8 @@
 
 [← Documentation home](/)
 
+Use `fastifyGuard()` as a `preHandler` to call sync [`evaluate()`](../reference/access-engine.md#methods) before your route handler. Same getter options as Express — see [Middleware reference](../reference/middleware.md).
+
 ```typescript
 import { fastifyGuard } from "@siremzam/sentinel/middleware/fastify";
 
@@ -13,3 +15,13 @@ fastify.post("/invoices/:id/approve", {
   }),
 }, handler);
 ```
+
+For async conditions, evaluate in the handler with `evaluateAsync()` — see [Async conditions](./async-conditions.md).
+
+---
+
+## Related
+
+- [Middleware reference](../reference/middleware.md)
+- [Express guide](./express.md) — same guard pattern
+- [Multitenancy](../concepts/multitenancy.md)

@@ -52,9 +52,9 @@ const engine = new AccessEngine<AppSchema>({
 });
 ```
 
-**What `schema: {} as AppSchema` does:** It tells TypeScript which generic `S` to use. The engine does not introspect this object at runtime — it exists purely for type inference.
+**What `schema: {} as AppSchema` does:** Type anchor only — tells TypeScript which generic `S` to use. The engine does not read this object at runtime.
 
-**What `createPolicyFactory` does:** It returns `allow` and `deny` builders already bound to `AppSchema`, so you do not write `allow<AppSchema>()` on every rule.
+**Schema-bound builders:** `createPolicyFactory()` returns `allow` and `deny` already typed for `AppSchema`. See [Policy factory](../guides/policy-factory.md) for `engine.allow()` as an alternative when rules are defined inline.
 
 ---
 
