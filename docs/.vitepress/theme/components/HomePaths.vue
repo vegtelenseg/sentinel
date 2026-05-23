@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { withBase } from "vitepress";
+
 const paths = [
   {
     label: "Quickstart",
@@ -31,7 +33,7 @@ const paths = [
         v-for="path in paths"
         :key="path.href"
         class="sentinel-paths__card"
-        :href="path.href"
+        :href="withBase(path.href)"
       >
         <span class="sentinel-paths__label">{{ path.label }}</span>
         <span class="sentinel-paths__title">{{ path.title }}</span>

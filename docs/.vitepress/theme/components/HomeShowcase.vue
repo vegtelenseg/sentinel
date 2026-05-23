@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { withBase } from "vitepress";
+
 const lines = [
   { n: 1, parts: [{ c: "tok-keyword", t: "const" }, { c: "tok-name", t: " engine " }, { c: "tok-punct", t: "= new " }, { c: "tok-fn", t: "AccessEngine" }, { c: "tok-punct", t: "({ schema });" }] },
   { n: 2, parts: [] },
@@ -11,7 +13,7 @@ const lines = [
   <section class="sentinel-showcase" aria-label="Example evaluation">
     <div class="sentinel-showcase__header">
       <p class="sentinel-showcase__eyebrow">What it looks like in code</p>
-      <a class="sentinel-showcase__cta" href="/getting-started/quickstart">Full quickstart →</a>
+      <a class="sentinel-showcase__cta" :href="withBase('/getting-started/quickstart')">Full quickstart →</a>
     </div>
     <div class="sentinel-showcase__panel">
       <div class="sentinel-showcase__chrome">
