@@ -54,8 +54,8 @@
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
     "benchmark": "tsx benchmarks/run.ts",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
+    "docs:dev": "cp llms.txt docs/public/llms.txt && vitepress dev docs",
+    "docs:build": "cp llms.txt docs/public/llms.txt && vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "prepublishOnly": "npm run build"
   },

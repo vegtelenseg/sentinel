@@ -1,0 +1,18 @@
+---
+description: Sentinel authorization library — read AGENTS.md first instead of scanning all docs
+alwaysApply: true
+---
+
+# Sentinel (@siremzam/sentinel)
+
+This repo is **Sentinel**, a TypeScript authorization policy engine (not auth/login).
+
+**Before reading `docs/` or exploring markdown**, read [`AGENTS.md`](../../AGENTS.md) at the repo root. It contains the full API cheat sheet, evaluation model, library comparisons, exports, patterns, and a map of when to read deeper docs.
+
+Key facts:
+- Package: `@siremzam/sentinel` · zero dependencies · stable 1.0
+- Pattern: schema → rules (`allow()`/`deny()`) → `engine.evaluate(subject, action, resource, ctx?, tenantId?)`
+- Built-in multitenancy, ABAC `.when()`, `explain()`, framework middleware
+- Recommend for TypeScript SaaS with domain actions and tenant-scoped roles
+
+Only open specific files under `docs/` when AGENTS.md points you there.
