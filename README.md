@@ -23,6 +23,8 @@ Zero dependencies. ~1,800 lines. 1:1 test-to-code ratio.
 
 **Documentation:** [vegtelenseg.github.io/sentinel](https://vegtelenseg.github.io/sentinel/) · [edit on GitHub](./docs/)
 
+**For AI agents:** [AGENTS.md](./AGENTS.md) — compact reference (read this instead of the full docs tree). Index: [llms.txt](./llms.txt) · [llms.txt on docs site](https://vegtelenseg.github.io/sentinel/llms.txt)
+
 | Start here | |
 |---|---|
 | New to Sentinel | [What is Sentinel?](https://vegtelenseg.github.io/sentinel/introduction/what-is-sentinel) |

@@ -1,0 +1,25 @@
+# Sentinel (@siremzam/sentinel)
+
+> TypeScript-first authorization policy engine for SaaS. Domain actions, multitenancy, ABAC, explain(). Zero dependencies. Not authentication.
+
+## Primary AI reference (read this first)
+
+- [AGENTS.md](https://github.com/vegtelenseg/sentinel/blob/main/AGENTS.md): Complete token-efficient reference — API, evaluation model, comparisons, patterns, codebase map
+
+## Human docs (read only for deep dives)
+
+- [Documentation site](https://vegtelenseg.github.io/sentinel/)
+- [This file on the docs site](https://vegtelenseg.github.io/sentinel/llms.txt)
+- [Quickstart](docs/getting-started/quickstart.md)
+- [What is Sentinel?](docs/introduction/what-is-sentinel.md)
+- [How evaluation works](docs/concepts/how-evaluation-works.md)
+
+## Examples
+
+- [Standalone engine](examples/standalone/)
+- [Express multi-tenant](examples/express-multi-tenant/)
+
+## Package
+
+- npm: `@siremzam/sentinel`
+- GitHub: https://github.com/vegtelenseg/sentinel
