@@ -25,6 +25,19 @@ See [The schema](../concepts/schema.md) for how to define and evolve `AppSchema`
 
 ---
 
+## ActionPattern
+
+`RuleBuilder.actions()` accepts schema actions plus rule-side wildcards (`invoice:*`, `*:read`):
+
+```typescript
+type ActionWildcard = `${string}:*` | `*:${string}`;
+type ActionPattern<S> = InferAction<S> | ActionWildcard;
+```
+
+`evaluate()`, `explain()`, `permitted()`, and `PolicyRule.actions` stay concrete `InferAction<S>` (or `"*"` on the rule). See [Wildcard actions](../guides/wildcards.md).
+
+---
+
 ## Subject
 
 Who is requesting access. Built in your auth layer and passed to every evaluation.

@@ -11,7 +11,7 @@ To skip the `<AppSchema>` generic on every call, use schema-bound builders from 
 | `.id(id)` | Rule identifier |
 | `.roles(...roles)` | Restrict to roles |
 | `.anyRole()` | Match any role |
-| `.actions(...actions)` | Actions (supports `*` wildcards) |
+| `.actions(...actions)` | Schema actions or `invoice:*` / `*:verb` wildcards (`ActionPattern`) |
 | `.anyAction()` | Any action |
 | `.on(...resources)` | Resource types |
 | `.anyResource()` | Any resource |

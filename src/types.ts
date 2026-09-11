@@ -30,6 +30,14 @@ export type InferTenantId<S extends SchemaDefinition> = S["tenantId"] extends st
   ? S["tenantId"]
   : string;
 
+/**
+ * Rule-side wildcard (`invoice:*`, `*:read`). Not valid as an `evaluate()` action.
+ */
+export type ActionWildcard = `${string}:*` | `*:${string}`;
+
+/** Accepted by `RuleBuilder.actions()`: schema actions plus rule-side wildcards. */
+export type ActionPattern<S extends SchemaDefinition> = InferAction<S> | ActionWildcard;
+
 // ---------------------------------------------------------------------------
 // User / Subject
 // ---------------------------------------------------------------------------
