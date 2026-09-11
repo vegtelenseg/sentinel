@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-11
+
 ### Added
 
 - `ActionPattern` / `ActionWildcard`: `RuleBuilder.actions()` accepts `invoice:*` and `*:verb` without a cast. `PolicyRule` and `evaluate()` action types are unchanged (#13)
