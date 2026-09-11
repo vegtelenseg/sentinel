@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Compile-time public API tests (`npm run typecheck:api`) encoding 1.0 inference (#12)
+- GitHub issue templates for documentation and CI/tooling; issue-first contribution process
+- Dependabot (npm + GitHub Actions), CodeQL, and PR dependency review
+- Node 24 on the CI test matrix
+
+### Changed
+
+- `AGENTS.md` now matches the shipped 1.0 API (`cacheSize`, `RoleHierarchy.define`, `engine.can()`) (#11)
+- CI pins Actions to commit SHAs, cancels stale PR runs, and limits docs deploys to docs-related paths (#14)
+
 ## [1.0.0] - 2026-05-22
 
 ### Breaking

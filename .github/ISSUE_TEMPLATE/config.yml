@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/vegtelenseg/sentinel/blob/main/SECURITY.md
+    about: Do not open a public issue. Follow the security policy (email / coordinated disclosure).
+  - name: Documentation
+    url: https://vegtelenseg.github.io/sentinel/
+    about: Human docs for @siremzam/sentinel

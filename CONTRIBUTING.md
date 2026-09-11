@@ -18,7 +18,8 @@ npm test
 | `npm test` | Run test suite |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with coverage report |
-| `npm run typecheck` | TypeScript type checking |
+| `npm run typecheck` | TypeScript type checking (`src/`, tests excluded) |
+| `npm run typecheck:api` | Compile-time public API tests (`src/api-types.test-d.ts`) |
 | `npm run build` | Compile to `dist/` |
 | `npm run benchmark` | Run performance benchmarks |
 | `npm run docs:dev` | VitePress docs site locally (http://localhost:5173/sentinel/) |
@@ -27,18 +28,29 @@ npm test
 
 ## Documentation
 
-Docs live in [`docs/`](./docs/) and are published with [VitePress](https://vitepress.dev/) to **https://vegtelenseg.github.io/sentinel/** on every push to `main` (workflow: [`.github/workflows/docs.yml`](./.github/workflows/docs.yml)).
+Docs live in [`docs/`](./docs/) and are published with [VitePress](https://vitepress.dev/) to **https://vegtelenseg.github.io/sentinel/** when `docs/` or `llms.txt` change on `main` (workflow: [`.github/workflows/docs.yml`](./.github/workflows/docs.yml)).
 
 When editing markdown under `docs/`, prefer site-root links (`/getting-started/quickstart`) for the home breadcrumb, and full GitHub URLs for files outside `docs/` (e.g. `SECURITY.md`, `examples/`).
 
 **First-time GitHub Pages setup:** Repository **Settings → Pages → Build and deployment → Source:** set to **GitHub Actions**. If deploy fails with `Failed to create deployment (status: 404)`, Pages is not enabled yet — enable it in Settings (or re-run the workflow after enabling).
 
+## Issues
+
+Every change that lands on `main` should have a GitHub issue, opened **before** the PR:
+
+1. Pick the matching template: **Bug report**, **Feature request**, **Documentation**, or **CI / tooling**.
+2. State the user-visible problem, the semver bucket (patch / minor / major), and what is out of scope.
+3. Reference it from the PR with `Fixes #n` so merge closes it.
+
+Exceptions: Dependabot PRs, reverts, and security reports (see [SECURITY.md](./SECURITY.md) — never a public issue).
+
 ## Pull Request Process
 
-1. Fork the repository and create your branch from `main`.
-2. If you've added functionality, add tests. This project maintains a ~1:1 test-to-code ratio.
-3. Make sure `npm test` and `npm run typecheck` pass.
-4. Write a clear PR description explaining **what** changed and **why**.
+1. Open or link the issue (see above).
+2. Fork the repository and create your branch from `main`.
+3. If you've added functionality, add tests. This project maintains a ~1:1 test-to-code ratio. Type-level API changes also need an update in `src/api-types.test-d.ts`.
+4. Make sure `npm test`, `npm run typecheck`, and `npm run typecheck:api` pass.
+5. Write a clear PR description explaining **what** changed and **why**, including `Fixes #n`.
 
 ## Code Style
 
@@ -57,12 +69,13 @@ Maintainers follow this checklist for each release:
    ```bash
    npm test
    npm run typecheck
+   npm run typecheck:api
    npm run lint
    npm run build
    npm pack --dry-run
    ```
 4. Commit, tag (`vX.Y.Z`), and push the tag
-5. Create a [GitHub Release](https://github.com/vegtelenseg/sentinel/releases/new) from the tag — [`.github/workflows/publish.yml`](./.github/workflows/publish.yml) publishes to npm via [Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC; provenance is generated automatically)
+5. Create a [GitHub Release](https://github.com/vegtelenseg/sentinel/releases/new) from the tag — [`.github/workflows/publish.yml`](./.github/workflows/publish.yml) publishes to npm via [Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) (OIDC; provenance is generated automatically). Do **not** publish on merge to `main`; docs-only deploys to GitHub Pages from `main`.
 
 **npm Trusted Publishing (one-time):** On [npmjs.com](https://www.npmjs.com/) → `@siremzam/sentinel` → **Settings** → **Trusted publishing** → **GitHub Actions** → repository `vegtelenseg/sentinel`, workflow filename `publish.yml`.
 

@@ -53,6 +53,7 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src/",
     "typecheck": "tsc --noEmit",
+    "typecheck:api": "tsc --noEmit -p tsconfig.type-tests.json",
     "benchmark": "tsx benchmarks/run.ts",
     "docs:dev": "cp llms.txt docs/public/llms.txt && vitepress dev docs",
     "docs:build": "cp llms.txt docs/public/llms.txt && vitepress build docs",

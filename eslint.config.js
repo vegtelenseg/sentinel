@@ -2,7 +2,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist/", "coverage/", "benchmarks/", "examples/"],
+    ignores: ["dist/", "coverage/", "benchmarks/", "examples/", "src/**/*.test-d.ts"],
   },
   ...tseslint.configs.recommended,
   {
