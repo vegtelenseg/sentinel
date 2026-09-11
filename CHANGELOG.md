@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Compile-time public API tests (`npm run typecheck:api`) encoding 1.0 inference (#12)
 - GitHub issue templates for documentation and CI/tooling; issue-first contribution process
-- Dependabot (npm + GitHub Actions), CodeQL, and PR dependency review
+- Dependabot (npm + GitHub Actions) and CodeQL
 - Node 24 on the CI test matrix
 
 ### Changed
