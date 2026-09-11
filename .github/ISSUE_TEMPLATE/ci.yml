@@ -1,0 +1,25 @@
+name: CI / tooling
+description: CI, CD, Dependabot, or repository automation
+title: "[CI]: "
+labels: ["ci"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for GitHub Actions, Dependabot, CodeQL, release publishing, or repo templates.
+        npm stays tag-gated (GitHub Release) — do not propose publish-on-push to `main`.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What should change?
+      description: Current workflow/tooling and the gap.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true

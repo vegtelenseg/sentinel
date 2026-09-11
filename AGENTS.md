@@ -143,10 +143,11 @@ interface Decision<S> {
 
 ```typescript
 new AccessEngine<S>({
-  schema: {} as S,
+  schema: {} as S,              // type anchor only — not read at runtime
   roleHierarchy?: RoleHierarchy<S>,
   strictTenancy?: boolean,      // throw if tenantId missing when required
-  evaluationCache?: { maxSize?: number },
+  cacheSize?: number,           // LRU for unconditional matches; 0 / omitted = off
+  defaultEffect?: "allow" | "deny", // default "deny"
   onDecision?: (decision) => void,
   onConditionError?: (err) => void,
 })
@@ -158,6 +159,7 @@ engine.explain(...) → ExplainResult             // per-rule trace for debuggin
 engine.permitted(subject, resource, actions[], ctx?, tenantId?) → Set<Action>  // UI buttons
 engine.permittedAsync(...)
 engine.allow() / engine.deny()                  // schema-bound builders (alternative to factory)
+engine.can(subject).perform(action).on(resource) // fluent check → Decision
 ```
 
 Rules are **frozen** on insert. **Deny by default** if nothing matches.
@@ -183,7 +185,7 @@ const { allow, deny } = createPolicyFactory<AppSchema>();
 
 allow()
   .roles("admin", "manager")     // or .anyRole()
-  .actions("invoice:approve", "invoice:read" as AppSchema["actions"])  // or .anyAction()
+  .actions("invoice:approve", "invoice:read")  // or .anyAction()
   .on("invoice")                 // or .anyResource()
   .when(ctx => ctx.subject.id === ctx.resourceContext.ownerId)  // ABAC; chain = AND
   .priority(10)                  // higher wins
@@ -192,7 +194,7 @@ allow()
   .build()
 ```
 
-Wildcards: `"invoice:*"` in actions — compiled to regex at `addRule()` time.
+Wildcards: `"invoice:*" as AppSchema["actions"]` — compiled to regex at `addRule()` time. The cast is required in 1.0 because the pattern is not a member of the action union; `evaluate()` still takes a concrete action, not a wildcard.
 
 Deny rules at same priority beat allow rules.
 
@@ -240,8 +242,8 @@ No subject → **401**. Denied → **403** with `decision.reason` by default.
 import { RoleHierarchy } from "@siremzam/sentinel";
 
 const hierarchy = new RoleHierarchy<AppSchema>()
-  .add("admin", "manager")
-  .add("manager", "member");
+  .define("admin", ["manager"])
+  .define("manager", ["member"]);
 
 new AccessEngine({ schema: {} as AppSchema, roleHierarchy: hierarchy });
 ```
@@ -288,7 +290,7 @@ Use `explain()` when user reports wrong access — do not grep codebase.
 | `examples/standalone/` | Engine-only demo |
 | `examples/express-multi-tenant/` | HTTP + tenant header |
 
-Tests mirror src: `*.test.ts`. Run `npm test`. Build: `npm run build` (tsup).
+Tests mirror src: `*.test.ts`. Public API types: `src/api-types.test-d.ts` (`npm run typecheck:api`). Run `npm test`. Build: `npm run build` (tsup).
 
 ---
 
