@@ -3,6 +3,7 @@ import type {
   InferRole,
   InferAction,
   InferResource,
+  ActionPattern,
   PolicyRule,
   PolicyEffect,
   Condition,
@@ -44,8 +45,8 @@ export class RuleBuilder<S extends SchemaDefinition> {
     return this;
   }
 
-  actions(...actions: InferAction<S>[]): this {
-    this._actions = actions;
+  actions(...actions: ActionPattern<S>[]): this {
+    this._actions = actions as InferAction<S>[];
     return this;
   }
 

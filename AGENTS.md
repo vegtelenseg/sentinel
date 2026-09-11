@@ -194,7 +194,7 @@ allow()
   .build()
 ```
 
-Wildcards: `"invoice:*" as AppSchema["actions"]` — compiled to regex at `addRule()` time. The cast is required in 1.0 because the pattern is not a member of the action union; `evaluate()` still takes a concrete action, not a wildcard.
+Wildcards: `.actions("invoice:*")` or `"*:read"` — compiled to regex at `addRule()` time. Casts (`as AppSchema["actions"]`) still work. `evaluate()` takes a concrete action, not a wildcard.
 
 Deny rules at same priority beat allow rules.
 

@@ -54,7 +54,7 @@ Rules can match action patterns:
 ```typescript
 allow()
   .roles("manager")
-  .actions("invoice:*" as AppSchema["actions"])
+  .actions("invoice:*")
   .on("invoice")
   .build();
 ```

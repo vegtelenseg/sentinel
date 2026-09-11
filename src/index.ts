@@ -19,6 +19,8 @@ export type {
   InferResource,
   InferAction,
   InferTenantId,
+  ActionWildcard,
+  ActionPattern,
   RoleAssignment,
   Subject,
   ResourceContext,

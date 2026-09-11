@@ -6,6 +6,14 @@ This guide covers version-to-version changes. For migrating from other libraries
 
 ---
 
+## 1.0 → 1.1
+
+**No code changes required.** `RuleBuilder.actions()` now accepts wildcard patterns (`invoice:*`, `*:read`) without a cast. Existing `"invoice:*" as Schema["actions"]` still typechecks. `evaluate()` / `permitted()` still take concrete schema actions.
+
+→ [Wildcard actions](/guides/wildcards)
+
+---
+
 ## 0.4 → 1.0
 
 **Breaking:** the `asyncConditions` engine option has been removed.

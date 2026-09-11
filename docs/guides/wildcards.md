@@ -22,13 +22,13 @@ The `*` segment matches any characters except `:` within that segment (implement
 ```typescript
 allow()
   .roles("manager")
-  .actions("invoice:*" as AppSchema["actions"])
+  .actions("invoice:*")
   .on("invoice")
   .describe("Managers can do anything with invoices")
   .build();
 ```
 
-TypeScript may require `as AppSchema["actions"]` because wildcard strings are wider than your action union — the engine validates at runtime.
+`RuleBuilder.actions()` accepts schema actions and `ActionPattern` wildcards (`invoice:*`, `*:read`). Casts like `"invoice:*" as AppSchema["actions"]` still typecheck. `evaluate()` still takes a concrete schema action, not a wildcard.
 
 ---
 

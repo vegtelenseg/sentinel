@@ -75,7 +75,7 @@ engine.addRules(
   // Managers and invoices
   allow()
     .roles("manager")
-    .actions("invoice:*" as AppSchema["actions"])
+    .actions("invoice:*")
     .on("invoice")
     .describe("Managers can do anything with invoices")
     .build(),

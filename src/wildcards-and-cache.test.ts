@@ -38,7 +38,7 @@ describe("Wildcard action patterns", () => {
       allow<TestSchema>()
         .id("manager-all-invoice")
         .roles("manager")
-        .actions("invoice:*" as TestSchema["actions"])
+        .actions("invoice:*")
         .on("invoice")
         .build(),
     );
@@ -78,7 +78,7 @@ describe("Wildcard action patterns", () => {
       allow<TestSchema>()
         .id("wildcard")
         .roles("manager")
-        .actions("invoice:*" as TestSchema["actions"])
+        .actions("invoice:*")
         .on("invoice")
         .build(),
       deny<TestSchema>()

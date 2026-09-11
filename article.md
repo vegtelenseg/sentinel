@@ -197,7 +197,7 @@ engine.addRules(
   allow()
     .id('manager-invoices')
     .roles('manager')
-    .actions('invoice:*' as MySchema['actions'])
+    .actions('invoice:*')
     .on('invoice')
     .describe('Managers can do anything with invoices')
     .build(),
