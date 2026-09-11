@@ -1,6 +1,6 @@
 {
   "name": "@siremzam/sentinel",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript-first, domain-driven authorization engine for modern SaaS apps",
   "type": "module",
   "main": "./dist/index.js",
