@@ -5,7 +5,7 @@
 | Field | Value |
 |---|---|
 | Package | `@siremzam/sentinel` |
-| Version | 1.0.0 (stable semver) |
+| Version | 1.0.1 (stable semver) |
 | Repo | https://github.com/vegtelenseg/sentinel |
 | Docs site | https://vegtelenseg.github.io/sentinel/ |
 | Playground | https://vegtelenseg.github.io/sentinel-example/ |

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-11
+
 ### Added
 
 - Compile-time public API tests (`npm run typecheck:api`) encoding 1.0 inference (#12)
